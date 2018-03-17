@@ -1,6 +1,6 @@
 from sets import *
 from playerclass import *
-from pisbulclass import *
+from bulletclass import *
 
 class Game():
 	def __init__(self):
