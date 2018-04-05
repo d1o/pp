@@ -1,21 +1,18 @@
 from sets import *
 
-class PBullet():
-	def __init__(self, x, y, direction):
-		self.bimg = pygame.image.load('img/bullet.png')
-		self.shooted = 0
-		
-		self.pos_y = y
-		if direction % 2 == 0:
-			self.vel_x = 20
-			self.pos_x = x + 25
-		else:
-			self.vel_x = -20
-			self.pos_x = x - 10
+class SingleBullet(pygame.sprite.Sprite):
+	def __init__(self, direction, pos):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.image.load('img/bullet.png')
+		#self.image.fill(BLACK)
+		self.rect = self.image.get_rect()
+		if direction > 0:
+			self.rect.center = pygame.math.Vector2((pos[0]+TILESIZE, pos[1]))
+			self.vel = pygame.math.Vector2((B_SPEED, 0))
+			
+		elif direction < 0:
+			self.rect.center = pygame.math.Vector2((pos[0]-TILESIZE, pos[1]))
+			self.vel = pygame.math.Vector2((-B_SPEED, 0))
 
-		print(direction % 2)
-
-	def draw(self, window):
-		self.pos_x += self.vel_x
-		window.blit(self.bimg, (self.pos_x, self.pos_y))
-		self.shooted += 1
+	def update(self):
+		self.rect.center += self.vel
