@@ -58,21 +58,7 @@ class Game():
 
 	def camera_move(self):
 		pass
-		'''if self.player.rect.top <= HEIGHT/4:
-			self.player.rect.bottom += TILESIZE/2
-			for b in BLOCKS:
-				b.rect.bottom += TILESIZE/2
-			for b in BACKGROUND:
-				b.rect.bottom += TILESIZE/2
-				
-		if self.player.rect.bottom >= HEIGHT - TILESIZE or abs(self.player.rect.bottom - HEIGHT - TILESIZE) < 2:
-			print('aaaa')
-			for b in BLOCKS:
-				b.rect.top -= TILESIZE/2
-			for b in BACKGROUND:
-				b.rect.top -= TILESIZE/2
-			self.player.rect.top -= TILESIZE'''
-
+		
 	def hit_wall_anim(self):
 		pass
 

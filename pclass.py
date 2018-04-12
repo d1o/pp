@@ -20,7 +20,7 @@ class Player(pygame.sprite.Sprite):
 		self.last_jump = 0
 
 		self.shooting = False		#gdy True to wywołuje funkcje w game.py
-		self.wait_for_shoot = 0		#ograniczanie strzelania w czasie
+		self.wait_for_shoot = 0		#ograniczenie strzelania w czasie
 		self.last_dir = 1			#kierunek w jakim poleci pocisk
 
 	def update(self):
@@ -75,6 +75,9 @@ class Player(pygame.sprite.Sprite):
 			self.last_jump -= 1
 
 	def wall_collision(self):
+		if self.rect.left + self.vel.x <= 0:
+			self.vel.x = 0
+
 		for b in BLOCKS:
 			if (b.rect.bottom > self.rect.top and b.rect.bottom < self.rect.bottom) or \
 			(b.rect.top < self.rect.bottom and b.rect.bottom > self.rect.bottom) or \
@@ -118,11 +121,5 @@ class Player(pygame.sprite.Sprite):
 
 		if self.pos.x > WIDTH - 80:
 			for b in BLOCKS:
-				b.rect.left -= abs(self.vel.x)
+				b.rect.right -= abs(self.vel.x)
 			self.pos.x -= abs(self.vel.x)
-
-		elif self.pos.x < 80:
-			self.pos.x += abs(self.vel.x)
-			for b in BLOCKS:
-				b.rect.right += abs(self.vel.x)
-			
