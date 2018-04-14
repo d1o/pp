@@ -3,6 +3,7 @@ from pclass import *
 from blockclass import *
 from level import *
 from bulletclass import *
+from enemyclass import *
 
 class Game():
 	def __init__(self):
@@ -16,11 +17,15 @@ class Game():
 	def start(self):
 		self.sprites = pygame.sprite.Group()
 		self.shots = pygame.sprite.Group()
-		self.player = Player(416, 350, self)
+		self.player = Player(416, 128, self)
 		self.sprites.add(self.player)
+		self.to_del = []
 
 		for b in BLOCKS:
 			self.sprites.add(b)
+
+		for e in ENEMIES:
+			self.sprites.add(e)
 
 		self.loop()
 
@@ -56,10 +61,19 @@ class Game():
 			if shots_coll_bricks:
 				self.hit_wall_anim()
 
+		for e in ENEMIES:
+			shots_coll_enemies = pygame.sprite.spritecollide(e, self.shots, True)
+			if shots_coll_bricks:
+				self.hit_enemy_anim()
+				self.to_del.append(e)
+
 	def camera_move(self):
 		pass
 		
 	def hit_wall_anim(self):
+		pass
+
+	def hit_enemy_anim(self):
 		pass
 
 	def draw(self):

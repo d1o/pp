@@ -1,17 +1,17 @@
 from sets import *
-from level import *
 
-class Player(pygame.sprite.Sprite):
-	def __init__(self, x, y, main):
+class Enemy1(pygame.sprite.Sprite):
+	def __init__ (self, x, y, BLCKS):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.Surface((TILESIZE, TILESIZE))
-		self.image.fill(GREEN)
+		self.image.fill(RED)
 		self.rect = self.image.get_rect()
 		self.pos = pygame.math.Vector2((x, y))
 		self.rect.center = self.pos
 		self.vel = pygame.math.Vector2((0, 0))
 		self.acc = pygame.math.Vector2((0, 0))
-		self.main = main
+
+		self.BLOCKS = BLCKS
 
 		self.vel_x = 0
 		self.vel_y = 0
@@ -23,6 +23,7 @@ class Player(pygame.sprite.Sprite):
 		self.wait_for_shoot = 0		#ograniczenie strzelania w czasie
 		self.last_dir = 1			#kierunek w jakim poleci pocisk
 
+
 	def update(self):
 		self.acc.x = 0
 		self.acc.y = GRAVITY
@@ -30,22 +31,6 @@ class Player(pygame.sprite.Sprite):
 		#zatrzymywanie gracza w miejscu
 		if abs(self.vel.x) < 0.01:
 			self.vel.x = 0
-
-		if self.wait_for_shoot != 0:
-			self.wait_for_shoot -= 1
-
-		k = pygame.key.get_pressed()
-		if k[pygame.K_RIGHT] or k[pygame.K_d]: 
-			self.acc.x = P_ACC
-
-		if k[pygame.K_LEFT] or k[pygame.K_a]: 
-			self.acc.x = -P_ACC
-
-		if (k[pygame.K_UP] or k[pygame.K_w]) and not self.jumping and self.last_jump == 0:
-			self.jumping = True
-
-		if (k[pygame.K_SPACE]) and self.wait_for_shoot == 0:
-			self.shooting = True
 
 		#w powietrzu opory są większe by łatwiej starować postacią
 		self.p_fric = P_FRI
@@ -67,18 +52,18 @@ class Player(pygame.sprite.Sprite):
 		if self.vel.x != self.last_dir and self.vel.x != 0: 
 			self.last_dir = self.vel.x
 		self.pos += self.vel
-		self.camera()
 		self.rect.center = self.pos
 
 		#ograniczenie skoków w czasie
 		if self.last_jump != 0:
 			self.last_jump -= 1
 
-	def wall_collision(self):
-		if self.rect.left + self.vel.x <= 0:
-			self.vel.x = 0
 
-		for b in BLOCKS:
+	def wall_collision(self):
+		#if self.rect.left + self.vel.x <= 0:
+		#	self.vel.x = 0
+
+		for b in self.BLOCKS:
 			if (b.rect.bottom > self.rect.top and b.rect.bottom < self.rect.bottom) or \
 			(b.rect.top < self.rect.bottom and b.rect.bottom > self.rect.bottom) or \
 			(b.rect.bottom == self.rect.bottom and b.rect.top == self.rect.top):
@@ -107,29 +92,3 @@ class Player(pygame.sprite.Sprite):
 				#kolizja góry
 				elif self.rect.top + self.vel.y <= b.rect.bottom and self.rect.top + self.vel.y > b.rect.top:
 					self.vel.y = (b.rect.bottom - self.rect.top)
-
-	def camera(self):
-		if self.pos.y > HEIGHT - 80:
-			self.pos.y -= abs(self.vel.y)
-			for e in ENEMIES:
-				e.rect.top -= abs(self.vel.y)
-			for b in BLOCKS:
-				b.rect.top -= abs(self.vel.y)
-
-		elif self.pos.y < 80:
-			for b in BLOCKS:
-				b.rect.bottom += abs(self.vel.y)
-			for e in ENEMIES:
-				e.rect.top += abs(self.vel.x)
-			self.pos.y += abs(self.vel.y)
-
-		if self.pos.x > WIDTH - 80:
-			for b in BLOCKS:
-				b.rect.right -= abs(self.vel.x)
-			for e in ENEMIES:
-				e.rect.right -= abs(self.vel.x)
-				e.vel.x = -self.vel.x
-				e.acc.x = -self.acc.x
-				e.pos.x -= abs(self.vel.x)
-			self.pos.x -= abs(self.vel.x)
-			#self.vel.x /= 2

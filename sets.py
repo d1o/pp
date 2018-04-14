@@ -28,6 +28,8 @@ D3 = pygame.image.load('img/tiles/dirt3.png')
 B1 = pygame.image.load('img/tiles/bricks1.png')
 B2 = pygame.image.load('img/tiles/bricks2.png')
 S1 = pygame.image.load('img/tiles/sky1.png')
+E1 = ''
 
 colls = [D1, D2, D3, B1, B2]
 no_colls = [S1]
+enems = [E1]
