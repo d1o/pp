@@ -63,9 +63,9 @@ class Game():
 
 		for e in ENEMIES:
 			shots_coll_enemies = pygame.sprite.spritecollide(e, self.shots, True)
-			if shots_coll_bricks:
+			if shots_coll_enemies:
 				self.hit_enemy_anim()
-				self.to_del.append(e)
+				e.kill()
 
 	def camera_move(self):
 		pass
