@@ -1,4 +1,5 @@
 from sets import *
+from bulletclass import *
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self, x, y, main):
@@ -15,14 +16,18 @@ class Player(pygame.sprite.Sprite):
 		self.last_jump = 0		#odstep w czasie miedzy skokami	
 		self.on_ground = True	#skok mozliwy tylko jak postac stoi na podlozu
 
+		self.last_shot = 0		#odstep strzelania w czasie
+		self.last_direction = 1
+
 	def update(self):
 		self.acc = pygame.math.Vector2((0, GRAVITY))
 		self.control()
 
+		#zatrzymywanie postaci w miejscu
 		if abs(self.vel.x) < 0.01:
 			self.vel.x = 0
 
-		#zatrzymywanie postaci w miejscu
+		#obliczanie kroku
 		self.acc.x += self.vel.x * P_FRI
 		self.vel.x += self.acc.x
 
@@ -37,18 +42,23 @@ class Player(pygame.sprite.Sprite):
 		if self.on_ground and self.last_jump > 0:
 			self.last_jump -= 1
 
+		if self.last_shot > 0:
+			self.last_shot -= 1
+
 	def control(self):
 		k = pygame.key.get_pressed()
 		if k[pygame.K_RIGHT] or k[pygame.K_d]: 
 			self.acc.x = P_ACC
+			self.last_direction = 1
 		if k[pygame.K_LEFT] or k[pygame.K_a]: 
 			self.acc.x = -P_ACC
+			self.last_direction = -1
 		if (k[pygame.K_UP] or k[pygame.K_w]):
 			self.jump()
 		if (k[pygame.K_DOWN] or k[pygame.K_s]):
 			pass
 		if (k[pygame.K_SPACE]):
-			pass
+			self.shoot()
 
 	def colls(self):
 		for b in self.main.blocks:
@@ -82,3 +92,10 @@ class Player(pygame.sprite.Sprite):
 			self.on_ground = False
 			self.vel.y = -12
 			self.last_jump = 15
+
+	def shoot(self):
+		if self.last_shot == 0:
+			self.last_shot = 20
+			b = Bullet1(self.last_direction, self.rect.center, 'p')
+			self.main.sprites.add(b)
+			self.main.shots.add(b)
