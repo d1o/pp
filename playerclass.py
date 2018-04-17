@@ -22,6 +22,7 @@ class Player(pygame.sprite.Sprite):
 		if abs(self.vel.x) < 0.01:
 			self.vel.x = 0
 
+		#zatrzymywanie postaci w miejscu
 		self.acc.x += self.vel.x * P_FRI
 		self.vel.x += self.acc.x
 
@@ -36,8 +37,6 @@ class Player(pygame.sprite.Sprite):
 		if self.on_ground and self.last_jump > 0:
 			self.last_jump -= 1
 
-		print(self.vel.y, self.last_jump, self.acc.y, self.on_ground)
-
 	def control(self):
 		k = pygame.key.get_pressed()
 		if k[pygame.K_RIGHT] or k[pygame.K_d]: 
@@ -48,7 +47,7 @@ class Player(pygame.sprite.Sprite):
 			self.jump()
 		if (k[pygame.K_DOWN] or k[pygame.K_s]):
 			pass
-		if (k[pygame.K_SPACE])	 and self.wait_for_shoot == 0:
+		if (k[pygame.K_SPACE]):
 			pass
 
 	def colls(self):

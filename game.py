@@ -29,9 +29,10 @@ class Game():
 			self.sprites.add(b)
 			self.blocks.add(b)
 
-		for e in ENEMIES:
-			self.sprites.add(e)
-			self.enemies.add(e)
+		for e in E:
+			self.enemy = Enemy1(e[0], e[1], self)
+			self.sprites.add(self.enemy)
+			self.enemies.add(self.enemy)
 
 		self.camera = Camera()
 		self.loop()
@@ -61,7 +62,7 @@ class Game():
 			if shots_coll_bricks:
 				self.hit_wall_anim()
 
-		for e in ENEMIES:
+		for e in self.enemies:
 			shots_coll_enemies = pygame.sprite.spritecollide(e, self.shots, True)
 			if shots_coll_enemies:
 				self.hit_enemy_anim()

@@ -1,7 +1,7 @@
 from sets import *
 
 class Enemy1(pygame.sprite.Sprite):
-	def __init__ (self, x, y, BLCKS):
+	def __init__(self, x, y, main):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.Surface((TILESIZE, TILESIZE))
 		self.image.fill(RED)
@@ -10,60 +10,30 @@ class Enemy1(pygame.sprite.Sprite):
 		self.rect.center = self.pos
 		self.vel = pygame.math.Vector2((0, 0))
 		self.acc = pygame.math.Vector2((0, 0))
+		self.main = main
 
-		self.BLOCKS = BLCKS
-
-		self.vel_x = 0
-		self.vel_y = 0
-
-		self.jumping = False
-		self.last_jump = 0
-
-		self.shooting = False		#gdy True to wywołuje funkcje w game.py
-		self.wait_for_shoot = 0		#ograniczenie strzelania w czasie
-		self.last_dir = 1			#kierunek w jakim poleci pocisk
-
+		self.last_jump = 0		#odstep w czasie miedzy skokami	
+		self.on_ground = True	#skok mozliwy tylko jak postac stoi na podlozu
 
 	def update(self):
-		self.acc.x = 0
-		self.acc.y = GRAVITY
+		self.acc = pygame.math.Vector2((0, GRAVITY))
 
-		#zatrzymywanie gracza w miejscu
-		if abs(self.vel.x) < 0.01:
-			self.vel.x = 0
-
-		#w powietrzu opory są większe by łatwiej starować postacią
-		self.p_fric = P_FRI
-		if self.jumping and self.last_jump != 0:
-			self.p_fric *= 3
-
-		#wieksze tarcie na poczatku ruchu
-		if (self.vel.x < 2*P_ACC and self.acc.x > 0) or (self.vel.x > -2*P_ACC and self.acc.x < 0):
-			self.additional_fric = self.p_fric
-		else:
-			self.additional_fric = 0
-
-		#tarcie
-		self.acc.x += self.vel.x * (self.p_fric + self.additional_fric)
+		self.acc.x += self.vel.x * P_FRI
 		self.vel.x += self.acc.x
-		if self.vel.y <= 15:
-			self.vel.y += self.acc.y
-		self.wall_collision()
-		if self.vel.x != self.last_dir and self.vel.x != 0: 
-			self.last_dir = self.vel.x
+
+		self.colls()
+
 		self.pos += self.vel
 		self.rect.center = self.pos
 
-		#ograniczenie skoków w czasie
-		if self.last_jump != 0:
+		if self.vel.y <= 15:
+			self.vel.y += self.acc.y
+
+		if self.on_ground and self.last_jump > 0:
 			self.last_jump -= 1
 
-
-	def wall_collision(self):
-		#if self.rect.left + self.vel.x <= 0:
-		#	self.vel.x = 0
-
-		for b in self.BLOCKS:
+	def colls(self):
+		for b in self.main.blocks:
 			if (b.rect.bottom > self.rect.top and b.rect.bottom < self.rect.bottom) or \
 			(b.rect.top < self.rect.bottom and b.rect.bottom > self.rect.bottom) or \
 			(b.rect.bottom == self.rect.bottom and b.rect.top == self.rect.top):
@@ -82,13 +52,15 @@ class Enemy1(pygame.sprite.Sprite):
 				#kolizja spodu
 				if self.rect.bottom + self.vel.y >= b.rect.top and self.rect.bottom + self.vel.y < b.rect.bottom:
 					self.vel.y = (b.rect.top - self.rect.bottom)
-					if self.jumping and self.last_jump == 0:
-						self.vel.y -= 12
-						self.last_jump = 60
-						self.jumping = False
-					elif not self.jumping and self.last_jump > 15:
-						self.last_jump = 15
+					if not self.on_ground and self.vel.y >= 0:
+						self.on_ground = True
 
 				#kolizja góry
 				elif self.rect.top + self.vel.y <= b.rect.bottom and self.rect.top + self.vel.y > b.rect.top:
 					self.vel.y = (b.rect.bottom - self.rect.top)
+
+	def jump(self):
+		if self.on_ground and self.last_jump == 0:
+			self.on_ground = False
+			self.vel.y = -12
+			self.last_jump = 15
