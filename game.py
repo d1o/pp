@@ -1,7 +1,8 @@
 from sets import *
-from pclass import *
-from blockclass import *
 from level import *
+from camera import *
+from playerclass import *
+from blockclass import *
 from bulletclass import *
 from enemyclass import *
 
@@ -16,17 +17,23 @@ class Game():
 
 	def start(self):
 		self.sprites = pygame.sprite.Group()
+		self.blocks = pygame.sprite.Group()
 		self.shots = pygame.sprite.Group()
-		self.player = Player(416, 128, self)
+		self.enemies = pygame.sprite.Group()
+
+		self.player = Player(WIDTH/2, HEIGHT/2, self)
 		self.sprites.add(self.player)
 		self.to_del = []
 
 		for b in BLOCKS:
 			self.sprites.add(b)
+			self.blocks.add(b)
 
 		for e in ENEMIES:
 			self.sprites.add(e)
+			self.enemies.add(e)
 
+		self.camera = Camera()
 		self.loop()
 
 	def loop(self):
@@ -45,16 +52,9 @@ class Game():
 				sys.exit()
 
 	def update(self):
-		if self.player.shooting:
-			s = SingleBullet(self.player.last_dir, self.player.rect.center)
-			self.sprites.add(s)
-			self.shots.add(s)
-			self.player.shooting = False
-			self.player.wait_for_shoot = 60
-
-		self.camera_move()
 		self.sprites.update()
 		self.player.update()
+		self.camera.update(self.player)
 
 		for b in BLOCKS:
 			shots_coll_bricks = pygame.sprite.spritecollide(b, self.shots, True)
@@ -78,8 +78,9 @@ class Game():
 
 	def draw(self):
 		self.WINDOW.fill(WHITE)
-		self.sprites.draw(self.WINDOW)
-		#self.draw_grid()
+		#self.sprites.draw(self.WINDOW)
+		for s in self.sprites:
+			self.WINDOW.blit(s.image, self.camera.move_obj(s))
 		pygame.display.flip()
 
 	def draw_grid(self):
