@@ -11,12 +11,13 @@ class Enemy1(pygame.sprite.Sprite):
 		self.vel = pygame.math.Vector2((0, 0))
 		self.acc = pygame.math.Vector2((0, 0))
 		self.main = main
+		self.enemy_acc = 1
 
 		self.last_jump = 0		#odstep w czasie miedzy skokami	
 		self.on_ground = True	#skok mozliwy tylko jak postac stoi na podlozu
 
 	def update(self):
-		self.acc = pygame.math.Vector2((0, GRAVITY))
+		self.acc = pygame.math.Vector2((self.enemy_acc, GRAVITY))
 
 		self.acc.x += self.vel.x * P_FRI
 		self.vel.x += self.acc.x
@@ -34,16 +35,19 @@ class Enemy1(pygame.sprite.Sprite):
 
 	def colls(self):
 		for b in self.main.blocks:
+			
 			if (b.rect.bottom > self.rect.top and b.rect.bottom < self.rect.bottom) or \
 			(b.rect.top < self.rect.bottom and b.rect.bottom > self.rect.bottom) or \
 			(b.rect.bottom == self.rect.bottom and b.rect.top == self.rect.top):
 				#kolizja prawego boku
 				if self.rect.right + self.vel.x >= b.rect.left and self.rect.right + self.vel.x < b.rect.right:
 					self.vel.x = (b.rect.left - self.rect.right)
+					self.enemy_acc *= -1
 
 				#kolizja lewego boku
 				elif self.rect.left + self.vel.x <= b.rect.right and self.rect.left + self.vel.x > b.rect.left:
 					self.vel.x = (b.rect.right - self.rect.left)
+					self.enemy_acc *= -1
 
 			
 			elif (b.rect.right > self.rect.left and b.rect.left < self.rect.right) or \

@@ -58,15 +58,23 @@ class Game():
 		self.camera.update(self.player)
 
 		for b in BLOCKS:
-			shots_coll_bricks = pygame.sprite.spritecollide(b, self.shots, True)
-			if shots_coll_bricks:
+			shots_bricks_coll = pygame.sprite.spritecollide(b, self.shots, True)
+			if shots_bricks_coll:
 				self.hit_wall_anim()
 
 		for e in self.enemies:
-			shots_coll_enemies = pygame.sprite.spritecollide(e, self.shots, True)
-			if shots_coll_enemies:
+			shots_enemies_colls = pygame.sprite.spritecollide(e, self.shots, True)
+			if shots_enemies_colls:
 				self.hit_enemy_anim()
 				e.kill()
+
+		player_enemies_colls = pygame.sprite.spritecollide(self.player, self.enemies, False)
+		if player_enemies_colls:
+			self.game = False
+
+
+		if self.player.pos.y >= len(level) * TILESIZE + 5 * TILESIZE:
+			self.game = False
 
 	def camera_move(self):
 		pass

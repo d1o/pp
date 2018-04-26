@@ -18,7 +18,10 @@ BLUE = (  0,   0, 255)
 P_ACC = 1
 P_FRI = -0.2
 
-########  ########
+######## USTAWIENIA PRZECIWNIKOW ########
+E_ACC = 0.5
+
+######## PREDKOSC POCISKOW ########
 B_SPEED = 25
 
 ######## GRAFIKI ########
