@@ -19,10 +19,10 @@ P_ACC = 1
 P_FRI = -0.2
 
 ######## USTAWIENIA PRZECIWNIKOW ########
-E_ACC = 0.5
+E_ACC1 = -1
 
 ######## PREDKOSC POCISKOW ########
-B_SPEED = 25
+B_SPEED = 20
 
 ######## GRAFIKI ########
 D1 = pygame.image.load('img/tiles/dirt1.png')

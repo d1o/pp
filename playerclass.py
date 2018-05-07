@@ -61,6 +61,7 @@ class Player(pygame.sprite.Sprite):
 			self.shoot()
 
 	def colls(self):
+		######## KOLIZJE ZE ŚCIANAMI ########
 		for b in self.main.blocks:
 			if (b.rect.bottom > self.rect.top and b.rect.bottom < self.rect.bottom) or \
 			(b.rect.top < self.rect.bottom and b.rect.bottom > self.rect.bottom) or \
@@ -87,6 +88,24 @@ class Player(pygame.sprite.Sprite):
 				elif self.rect.top + self.vel.y <= b.rect.bottom and self.rect.top + self.vel.y > b.rect.top:
 					self.vel.y = (b.rect.bottom - self.rect.top)
 
+		######## KOLIZJE Z KOLCAMI ########
+		for s in self.main.spikes:
+			#kolizje od góry
+			if ( (s.rect.top == self.rect.bottom) or (s.rect.top < self.rect.bottom and s.rect.top > self.rect.top) ) and ( (s.rect.left > self.rect.left and s.rect.left < self.rect.right) or (s.rect.left == self.rect.left and s.rect.right == self.rect.right) or (s.rect.left < self.rect.left and s.rect.right > self.rect.left) ):
+				self.main.game = False
+
+			if (s.rect.bottom > self.rect.top and s.rect.bottom < self.rect.bottom) or \
+			(s.rect.top < self.rect.bottom and s.rect.bottom > self.rect.bottom) or \
+			(s.rect.bottom == self.rect.bottom and s.rect.top == self.rect.top):
+				#kolizja prawego boku
+				if self.rect.right + self.vel.x >= s.rect.left and self.rect.right + self.vel.x < s.rect.right:
+					self.vel.x = (s.rect.left - self.rect.right)
+
+				#kolizja lewego boku
+				elif self.rect.left + self.vel.x <= s.rect.right and self.rect.left + self.vel.x > s.rect.left:
+					self.vel.x = (s.rect.right - self.rect.left)
+
+
 	def jump(self):
 		if self.on_ground and self.last_jump == 0:
 			self.on_ground = False
@@ -95,7 +114,7 @@ class Player(pygame.sprite.Sprite):
 
 	def shoot(self):
 		if self.last_shot == 0:
-			self.last_shot = 20
+			self.last_shot = 60
 			b = Bullet1(self.last_direction, self.rect.center, 'p')
 			self.main.sprites.add(b)
 			self.main.shots.add(b)

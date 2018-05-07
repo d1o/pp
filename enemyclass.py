@@ -11,7 +11,7 @@ class Enemy1(pygame.sprite.Sprite):
 		self.vel = pygame.math.Vector2((0, 0))
 		self.acc = pygame.math.Vector2((0, 0))
 		self.main = main
-		self.enemy_acc = 1
+		self.enemy_acc = E_ACC1
 
 		self.last_jump = 0		#odstep w czasie miedzy skokami	
 		self.on_ground = True	#skok mozliwy tylko jak postac stoi na podlozu
@@ -68,3 +68,13 @@ class Enemy1(pygame.sprite.Sprite):
 			self.on_ground = False
 			self.vel.y = -12
 			self.last_jump = 15
+
+class Spikes1(pygame.sprite.Sprite):
+	def __init__(self, x, y, main):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.Surface((TILESIZE, TILESIZE))
+		self.image.fill(BLACK)
+		self.rect = self.image.get_rect()
+		self.pos = pygame.math.Vector2((x, y))
+		self.rect.center = self.pos
+		self.main = main

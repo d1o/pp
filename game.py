@@ -19,7 +19,9 @@ class Game():
 		self.sprites = pygame.sprite.Group()
 		self.blocks = pygame.sprite.Group()
 		self.shots = pygame.sprite.Group()
+
 		self.enemies = pygame.sprite.Group()
+		self.spikes = pygame.sprite.Group()
 
 		self.player = Player(WIDTH/2, HEIGHT/2, self)
 		self.sprites.add(self.player)
@@ -33,6 +35,11 @@ class Game():
 			self.enemy = Enemy1(e[0], e[1], self)
 			self.sprites.add(self.enemy)
 			self.enemies.add(self.enemy)
+
+		for s in S:
+			self.spi = Spikes1(s[0], s[1], self)
+			self.sprites.add(self.spi)
+			self.spikes.add(self.spi)
 
 		self.camera = Camera()
 		self.loop()
@@ -57,22 +64,29 @@ class Game():
 		self.player.update()
 		self.camera.update(self.player)
 
+		######## CZY POCISK TRAFIŁ W ŚCIANĘ/KOLCE ########
 		for b in BLOCKS:
 			shots_bricks_coll = pygame.sprite.spritecollide(b, self.shots, True)
 			if shots_bricks_coll:
 				self.hit_wall_anim()
+		for s in self.spikes:
+			shots_bricks_coll = pygame.sprite.spritecollide(s, self.shots, True)
+			if shots_bricks_coll:
+				self.hit_wall_anim()
 
+		######## CZY POCISK TRAFIŁ W PRZECIWNIKA ########
 		for e in self.enemies:
 			shots_enemies_colls = pygame.sprite.spritecollide(e, self.shots, True)
 			if shots_enemies_colls:
 				self.hit_enemy_anim()
 				e.kill()
 
+		######## CZY PRZECIWNIK TRAFIŁ NA GRACZA ########
 		player_enemies_colls = pygame.sprite.spritecollide(self.player, self.enemies, False)
 		if player_enemies_colls:
 			self.game = False
 
-
+		######## CZY GRACZ WYPADŁ POZA MAPĘ ########
 		if self.player.pos.y >= len(level) * TILESIZE + 5 * TILESIZE:
 			self.game = False
 
