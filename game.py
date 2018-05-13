@@ -159,6 +159,10 @@ class Game():
 		self.player.update()
 		self.camera.update(self.player)
 
+		self.colls()
+
+		
+	def colls(self):
 		######## CZY POCISK TRAFIŁ W ŚCIANĘ/KOLCE ########
 		for b in BLOCKS:
 			shots_bricks_coll = pygame.sprite.spritecollide(b, self.shots, True)
@@ -171,7 +175,7 @@ class Game():
 			if shots_box_coll:
 				if bo.shots < 2: bo.shots += random.randint(1,2)
 				else: 
-					self.bonus(bo.rect.center, 'b')
+					self.bonus(bo.rect.center, 'box')
 					bo.kill()
 
 		######## CZY POCISK TRAFIŁ W PRZECIWNIKA ########
@@ -179,7 +183,7 @@ class Game():
 			shots_enemies_colls = pygame.sprite.spritecollide(e, self.shots, True)
 			if shots_enemies_colls:
 				self.score += 50
-				self.bonus(e.rect.center, 'e')
+				self.bonus(e.rect.center, 'enemy')
 				e.kill()
 
 		######## CZY PRZECIWNIK TRAFIŁ NA GRACZA ########
@@ -193,16 +197,16 @@ class Game():
 
 		######## CZY GRACZ PODNIÓSŁ BONUS ########
 		bns_pla_coll = pygame.sprite.spritecollide(self.player, self.bonuses, True)
-		if bns_pla_coll:
-			self.score += 100
+		for b in bns_pla_coll:
+			self.score += b.pts
 
 	def bonus(self, pos, who):
-		bns = Bonus(pos)
-		if who == 'b':
+		bns = Bonus(pos, who)
+		if who == 'box':
 			if random.randint(1,3) == 1:
 				self.sprites.add(bns)
 				self.bonuses.add(bns)
-		elif who == 'e':
+		elif who == 'enemy':
 			if random.randint(1,5) == 1:
 				self.sprites.add(bns)
 				self.bonuses.add(bns)

@@ -4,8 +4,10 @@ from bulletclass import *
 class Player(pygame.sprite.Sprite):
 	def __init__(self, x, y, main):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.Surface((TILESIZE, TILESIZE))
-		self.image.fill(GREEN)
+		#self.image = pygame.Surface((TILESIZE, TILESIZE))
+		#self.image.fill(GREEN)
+		#self.mask = pygame.mask.from_surface(self.image)
+		self.image = pygame.image.load('img/player/player1p.png')
 		self.rect = self.image.get_rect()
 		self.pos = pygame.math.Vector2((x, y))
 		self.rect.center = self.pos
@@ -14,18 +16,30 @@ class Player(pygame.sprite.Sprite):
 		self.main = main
 
 		self.last_jump = 0		#odstep w czasie miedzy skokami	
-		self.on_ground = True	#skok mozliwy tylko jak postac stoi na podlozu
+		self.on_ground = True	#skok mozliwy tylko jak gracz stoi na podlozu
 
 		self.last_shot = 0		#odstep strzelania w czasie
-		self.last_direction = 1
+		self.last_direction = 0	#kierunek w ktorym obrocony jest gracz
+		self.which_img = 0		#zmienna pomocnicza w wyborze img
 
 	def update(self):
 		self.acc = pygame.math.Vector2((0, GRAVITY))
-		self.control()
+		self.controls()
 
 		#zatrzymywanie postaci w miejscu
 		if abs(self.vel.x) < 0.01:
 			self.vel.x = 0
+
+		#gdy gracz stoi w miejscu zmiana img na poczatkowy
+		if self.vel.x == 0:
+			if self.last_direction == 0:
+				self.image = pygame.image.load('img/player/player0p.png')
+				self.rect = self.image.get_rect()
+				self.rect.center = self.pos
+			else:
+				self.image = pygame.image.load('img/player/player0l.png')
+				self.rect = self.image.get_rect()
+				self.rect.center = self.pos
 
 		#obliczanie kroku
 		self.acc.x += self.vel.x * P_FRI
@@ -36,23 +50,48 @@ class Player(pygame.sprite.Sprite):
 		self.pos += self.vel
 		self.rect.center = self.pos
 
+		#przyspieszenie grawitacyjne
 		if self.vel.y <= 15:
 			self.vel.y += self.acc.y
 
+		#zerowanie oczekawinia na strzal i skok
 		if self.on_ground and self.last_jump > 0:
 			self.last_jump -= 1
-
 		if self.last_shot > 0:
 			self.last_shot -= 1
 
-	def control(self):
+	def controls(self):
 		k = pygame.key.get_pressed()
 		if k[pygame.K_RIGHT] or k[pygame.K_d]: 
 			self.acc.x = P_ACC
-			self.last_direction = 1
+
+			#zmiana img w trakcie ruchu gracza
+			if self.last_direction == 1:
+				self.which_img = 0
+			elif self.last_direction == 0 and self.on_ground == True:
+				self.which_img = (self.which_img + 1)%6
+
+			self.image = pygame.image.load('img/player/player'+str(self.which_img)+'p.png')
+			self.rect = self.image.get_rect()
+			self.rect.center = self.pos
+
+			self.last_direction = 0
+			
 		if k[pygame.K_LEFT] or k[pygame.K_a]: 
 			self.acc.x = -P_ACC
-			self.last_direction = -1
+
+			#zmiana img w trakcie ruchu gracza
+			if self.last_direction == 0:
+				self.which_img = 0
+			elif self.last_direction == 1 and self.on_ground == True:
+				self.which_img = (self.which_img + 1)%6
+
+			self.image = pygame.image.load('img/player/player'+str(self.which_img)+'l.png')
+			self.rect = self.image.get_rect()
+			self.rect.center = self.pos
+
+			self.last_direction = 1
+
 		if (k[pygame.K_UP] or k[pygame.K_w]):
 			self.jump()
 		if (k[pygame.K_DOWN] or k[pygame.K_s]):

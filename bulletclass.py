@@ -7,11 +7,11 @@ class Bullet1(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.who = who
 
-		if direction > 0:
+		if direction == 0:
 			self.rect.center = pygame.math.Vector2((pos[0]+TILESIZE, pos[1]))
 			self.vel = pygame.math.Vector2((B_SPEED, 0))
 			
-		elif direction < 0:
+		elif direction == 1:
 			self.rect.center = pygame.math.Vector2((pos[0]-TILESIZE, pos[1]))
 			self.vel = pygame.math.Vector2((-B_SPEED, 0))
 
@@ -28,11 +28,11 @@ class Bullet2(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.who = who
 
-		if direction > 0:
+		if direction == 0:
 			self.rect.center = pygame.math.Vector2((pos[0]+TILESIZE, pos[1]))
 			self.vel = pygame.math.Vector2((B_SPEED, 0))
 			
-		elif direction < 0:
+		elif direction == 1:
 			self.rect.center = pygame.math.Vector2((pos[0]-TILESIZE, pos[1]))
 			self.vel = pygame.math.Vector2((-B_SPEED, 0))
 
