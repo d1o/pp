@@ -5,6 +5,9 @@ from playerclass import *
 from blockclass import *
 from bulletclass import *
 from enemyclass import *
+from pntclass import *
+from bonusclass import *
+import random
 
 class Game():
 	def __init__(self):
@@ -14,22 +17,113 @@ class Game():
 		pygame.display.set_caption(TITLE)
 		self.clock = pygame.time.Clock()
 		self.running = True
+		self.game = True
+
+		self.score = 0
+
+		pygame.font.init()
+		self.font1 = pygame.font.Font('fonts/Ubuntu-R.ttf', 64)	
+		self.font2 = pygame.font.Font('fonts/Ubuntu-R.ttf', 30)
+		self.font3 = pygame.font.Font('fonts/Ubuntu-R.ttf', 20)
+		
+	def start_screen(self):
+		self.screen_loop = True
+		self.decision = 0
+
+		pos1 = (WIDTH/20, 10*HEIGHT/20)
+		self.txt_positions = [pos1, (pos1[0], pos1[1]+64), (pos1[0], pos1[1]+128), (pos1[0], pos1[1]+192)]
+		self.pnt = Pnt()
+
+		while self.screen_loop:
+			if self.game == True:
+				self.text_start = self.font1.render('START', 0, WHITE)
+				self.r_text_start = self.text_start.get_rect()
+				self.r_text_start.topleft = pygame.math.Vector2(self.txt_positions[0])
+
+				self.text_level = self.font1.render('LEVEL SELECT', 0, WHITE)
+				self.r_text_level = self.text_level.get_rect()
+				self.r_text_level.topleft = pygame.math.Vector2(self.txt_positions[1])
+
+				self.text_instructions = self.font1.render('INSCTRUCTIONS', 0, WHITE)
+				self.r_text_instructions = self.text_instructions.get_rect()
+				self.r_text_instructions.topleft = pygame.math.Vector2(self.txt_positions[2])
+
+				self.text_exit = self.font1.render('EXIT', 0, WHITE)
+				self.r_text_exit = self.text_exit.get_rect()
+				self.r_text_exit.topleft = pygame.math.Vector2(self.txt_positions[3])
+
+				for e in pygame.event.get():
+					if e.type == QUIT:
+						self.runnig = False
+						sys.exit()
+					if e.type == pygame.KEYDOWN:
+						if e.key == pygame.K_DOWN:
+							if self.decision < 3: self.decision += 1
+						if e.key == pygame.K_UP:
+							if self.decision > 0: self.decision -= 1
+						if e.key == pygame.K_RETURN:
+							self.screen_loop = False
+
+				self.pnt.rect.midright = pygame.math.Vector2(self.txt_positions[self.decision][0], self.txt_positions[self.decision][1]+36)
+
+				self.WINDOW.fill(RED)
+				self.WINDOW.blit(self.text_start,self.r_text_start)
+				self.WINDOW.blit(self.text_instructions,self.r_text_instructions)
+				self.WINDOW.blit(self.text_level,self.r_text_level)
+				self.WINDOW.blit(self.text_exit,self.r_text_exit)
+				self.WINDOW.blit(self.pnt.image,self.pnt.rect)
+				pygame.display.flip()
+
+			else:
+				for e in pygame.event.get():
+					if e.type == QUIT:
+						self.runnig = False
+						sys.exit()
+
+				k = pygame.key.get_pressed()
+				if k[pygame.K_RETURN]: 
+					
+					self.decision = 0
+					self.screen_loop = False
+
+				self.text_game_over = self.font1.render('GAME OVER', 0, WHITE)
+				self.text_press_ret = self.font2.render('Press return to start...', 0, WHITE)
+
+				self.WINDOW.fill(BLACK)
+				self.WINDOW.blit(self.text_game_over,(13*WIDTH/40, HEIGHT/5))
+				self.WINDOW.blit(self.text_press_ret,(WIDTH/22, 7*HEIGHT/8))
+				pygame.display.flip()
+
+		if self.decision == 0:
+			self.start()
+		else:
+			self.runnig = False
+			sys.exit()
 
 	def start(self):
+		self.score = 0
+
 		self.sprites = pygame.sprite.Group()
 		self.blocks = pygame.sprite.Group()
+		self.boxes = pygame.sprite.Group()
 		self.shots = pygame.sprite.Group()
+		self.bonuses = pygame.sprite.Group()
 
 		self.enemies = pygame.sprite.Group()
 		self.spikes = pygame.sprite.Group()
 
 		self.player = Player(WIDTH/2, HEIGHT/2, self)
 		self.sprites.add(self.player)
-		self.to_del = []
 
 		for b in BLOCKS:
 			self.sprites.add(b)
 			self.blocks.add(b)
+
+		for bo in B:
+			self.box = Box(bo[0], bo[1], self)
+			self.sprites.add(self.box)
+			#self.blocks.add(bo)
+			self.boxes.add(self.box)
 
 		for e in E:
 			self.enemy = Enemy1(e[0], e[1], self)
@@ -40,6 +134,7 @@ class Game():
 			self.spi = Spikes1(s[0], s[1], self)
 			self.sprites.add(self.spi)
 			self.spikes.add(self.spi)
+			self.blocks.add(self.spi)
 
 		self.camera = Camera()
 		self.loop()
@@ -67,18 +162,24 @@ class Game():
 		######## CZY POCISK TRAFIŁ W ŚCIANĘ/KOLCE ########
 		for b in BLOCKS:
 			shots_bricks_coll = pygame.sprite.spritecollide(b, self.shots, True)
-			if shots_bricks_coll:
-				self.hit_wall_anim()
 		for s in self.spikes:
 			shots_bricks_coll = pygame.sprite.spritecollide(s, self.shots, True)
-			if shots_bricks_coll:
-				self.hit_wall_anim()
+
+		######## CZY POCISK TRAFIŁ W SKRZYNKĘ ########
+		for bo in self.boxes:
+			shots_box_coll = pygame.sprite.spritecollide(bo, self.shots, True)
+			if shots_box_coll:
+				if bo.shots < 2: bo.shots += random.randint(1,2)
+				else: 
+					self.bonus(bo.rect.center, 'b')
+					bo.kill()
 
 		######## CZY POCISK TRAFIŁ W PRZECIWNIKA ########
 		for e in self.enemies:
 			shots_enemies_colls = pygame.sprite.spritecollide(e, self.shots, True)
 			if shots_enemies_colls:
-				self.hit_enemy_anim()
+				self.score += 50
+				self.bonus(e.rect.center, 'e')
 				e.kill()
 
 		######## CZY PRZECIWNIK TRAFIŁ NA GRACZA ########
@@ -90,27 +191,35 @@ class Game():
 		if self.player.pos.y >= len(level) * TILESIZE + 5 * TILESIZE:
 			self.game = False
 
-	def camera_move(self):
-		pass
-		
-	def hit_wall_anim(self):
-		pass
+		######## CZY GRACZ PODNIÓSŁ BONUS ########
+		bns_pla_coll = pygame.sprite.spritecollide(self.player, self.bonuses, True)
+		if bns_pla_coll:
+			self.score += 100
 
-	def hit_enemy_anim(self):
-		pass
+	def bonus(self, pos, who):
+		bns = Bonus(pos)
+		if who == 'b':
+			if random.randint(1,3) == 1:
+				self.sprites.add(bns)
+				self.bonuses.add(bns)
+		elif who == 'e':
+			if random.randint(1,5) == 1:
+				self.sprites.add(bns)
+				self.bonuses.add(bns)
 
 	def draw(self):
 		self.WINDOW.fill(WHITE)
 		#self.sprites.draw(self.WINDOW)
 		for s in self.sprites:
 			self.WINDOW.blit(s.image, self.camera.move_obj(s))
-		pygame.display.flip()
 
-	def draw_grid(self):
-		for x in range(0, WIDTH, TILESIZE):
-			pygame.draw.line(self.WINDOW, BLACK, (x, 0), (x, HEIGHT))
-		for y in range(0, HEIGHT, TILESIZE):
-			pygame.draw.line(self.WINDOW, BLACK, (0, y), (WIDTH, y))
+		scr_str = str(self.score)
+		while len(scr_str) != 5:
+			scr_str = '0' + scr_str
+		self.text_score = self.font3.render('score: '+scr_str, 0, BLACK)
+
+		self.WINDOW.blit(self.text_score,(8.5*WIDTH/10, HEIGHT/50))
+		pygame.display.flip()
 
 	def starting_screen(self):
 		pass
@@ -120,7 +229,7 @@ class Game():
 
 g = Game()
 while g.running:
-	g.start()
+	g.start_screen()
 	g.lose_screen()
 
 

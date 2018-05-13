@@ -88,6 +88,34 @@ class Player(pygame.sprite.Sprite):
 				elif self.rect.top + self.vel.y <= b.rect.bottom and self.rect.top + self.vel.y > b.rect.top:
 					self.vel.y = (b.rect.bottom - self.rect.top)
 
+		######## KOLIZJE ZE SKRZYNKAMI ########
+		for b in self.main.boxes:
+			if (b.rect.bottom > self.rect.top and b.rect.bottom < self.rect.bottom) or \
+			(b.rect.top < self.rect.bottom and b.rect.bottom > self.rect.bottom) or \
+			(b.rect.bottom == self.rect.bottom and b.rect.top == self.rect.top):
+				#kolizja prawego boku
+				if self.rect.right + self.vel.x >= b.rect.left and self.rect.right + self.vel.x < b.rect.right:
+					self.vel.x = (b.rect.left - self.rect.right)
+
+				#kolizja lewego boku
+				elif self.rect.left + self.vel.x <= b.rect.right and self.rect.left + self.vel.x > b.rect.left:
+					self.vel.x = (b.rect.right - self.rect.left)
+
+			
+			elif (b.rect.right > self.rect.left and b.rect.left < self.rect.right) or \
+			(b.rect.left < self.rect.right and b.rect.right > self.rect.right) or \
+			(b.rect.right == self.rect.right and b.rect.left == self.rect.left):
+				#kolizja spodu
+				if self.rect.bottom + self.vel.y >= b.rect.top and self.rect.bottom + self.vel.y < b.rect.bottom:
+					self.vel.y = (b.rect.top - self.rect.bottom)
+					if not self.on_ground and self.vel.y >= 0:
+						self.on_ground = True
+
+				#kolizja góry
+				elif self.rect.top + self.vel.y <= b.rect.bottom and self.rect.top + self.vel.y > b.rect.top:
+					self.vel.y = (b.rect.bottom - self.rect.top)
+
+
 		######## KOLIZJE Z KOLCAMI ########
 		for s in self.main.spikes:
 			#kolizje od góry
