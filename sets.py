@@ -22,4 +22,5 @@ P_FRI = -0.2
 E_ACC1 = -1
 
 ######## PREDKOSC POCISKOW ########
-B_SPEED = 20
+B_SPEED_X = 20
+B_SPEED_Y = 3

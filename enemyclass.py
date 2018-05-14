@@ -100,8 +100,7 @@ class Enemy1(pygame.sprite.Sprite):
 class Spikes1(pygame.sprite.Sprite):
 	def __init__(self, x, y, main):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.Surface((TILESIZE, TILESIZE))
-		self.image.fill(BLACK)
+		self.image = pygame.image.load('img/enemies/spikes/spikes.png')
 		self.rect = self.image.get_rect()
 		self.pos = pygame.math.Vector2((x, y))
 		self.rect.center = self.pos

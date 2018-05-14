@@ -26,7 +26,7 @@ class Game():
 		self.font2 = pygame.font.Font('fonts/Ubuntu-R.ttf', 30)
 		self.font3 = pygame.font.Font('fonts/Ubuntu-R.ttf', 20)
 		
-	def start_screen(self):
+	def screen(self):
 		self.screen_loop = True
 		self.decision = 0
 
@@ -102,15 +102,14 @@ class Game():
 
 	def start(self):
 		self.score = 0
-
-		self.sprites = pygame.sprite.Group()
-		self.blocks = pygame.sprite.Group()
-		self.boxes = pygame.sprite.Group()
-		self.shots = pygame.sprite.Group()
-		self.bonuses = pygame.sprite.Group()
-
-		self.enemies = pygame.sprite.Group()
-		self.spikes = pygame.sprite.Group()
+		self.sprites = pygame.sprite.Group()		#wszystkie sprity
+		self.blocks = pygame.sprite.Group()			#sciany
+		self.boxes = pygame.sprite.Group()			#skrzynki
+		self.shots = pygame.sprite.Group()			#wystrzelone pociski
+		self.bonuses = pygame.sprite.Group()		#bonusy z punktami
+		self.weapons = pygame.sprite.Group()		#bonusy z bronia
+		self.enemies = pygame.sprite.Group()		#przeciwnicy
+		self.spikes = pygame.sprite.Group()			#kolce
 
 		self.player = Player(WIDTH/2, HEIGHT/2, self)
 		self.sprites.add(self.player)
@@ -122,7 +121,6 @@ class Game():
 		for bo in B:
 			self.box = Box(bo[0], bo[1], self)
 			self.sprites.add(self.box)
-			#self.blocks.add(bo)
 			self.boxes.add(self.box)
 
 		for e in E:
@@ -164,7 +162,7 @@ class Game():
 		
 	def colls(self):
 		######## CZY POCISK TRAFIŁ W ŚCIANĘ/KOLCE ########
-		for b in BLOCKS:
+		for b in self.blocks:
 			shots_bricks_coll = pygame.sprite.spritecollide(b, self.shots, True)
 		for s in self.spikes:
 			shots_bricks_coll = pygame.sprite.spritecollide(s, self.shots, True)
@@ -195,25 +193,38 @@ class Game():
 		if self.player.pos.y >= len(level) * TILESIZE + 5 * TILESIZE:
 			self.game = False
 
-		######## CZY GRACZ PODNIÓSŁ BONUS ########
+		######## CZY GRACZ PODNIÓSŁ BONUS/BRON ########
 		bns_pla_coll = pygame.sprite.spritecollide(self.player, self.bonuses, True)
 		for b in bns_pla_coll:
 			self.score += b.pts
 
+		wpn_pla_coll = pygame.sprite.spritecollide(self.player, self.weapons, True)
+		for b in wpn_pla_coll:
+			self.player.weapon = b.v
+
 	def bonus(self, pos, who):
 		bns = Bonus(pos, who)
+		wpn = Weapon(pos, random.randint(1,2))
 		if who == 'box':
 			if random.randint(1,3) == 1:
-				self.sprites.add(bns)
-				self.bonuses.add(bns)
+				if random.randint(1,2) == 1:	#wybiera czy bonus punktowy czy bron
+					self.sprites.add(bns)
+					self.bonuses.add(bns)
+				else:
+					self.sprites.add(wpn)
+					self.weapons.add(wpn)
+
 		elif who == 'enemy':
 			if random.randint(1,5) == 1:
-				self.sprites.add(bns)
-				self.bonuses.add(bns)
+				if random.randint(1,2) == 1:	#wybiera czy bonus punktowy czy bron
+					self.sprites.add(bns)
+					self.bonuses.add(bns)
+				else:
+					self.sprites.add(wpn)
+					self.weapons.add(wpn)
 
 	def draw(self):
 		self.WINDOW.fill(WHITE)
-		#self.sprites.draw(self.WINDOW)
 		for s in self.sprites:
 			self.WINDOW.blit(s.image, self.camera.move_obj(s))
 
@@ -225,16 +236,9 @@ class Game():
 		self.WINDOW.blit(self.text_score,(8.5*WIDTH/10, HEIGHT/50))
 		pygame.display.flip()
 
-	def starting_screen(self):
-		pass
-
-	def lose_screen(self):
-		pass
-
 g = Game()
 while g.running:
-	g.start_screen()
-	g.lose_screen()
+	g.screen()
 
 
 pygame.quit()

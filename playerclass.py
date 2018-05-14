@@ -4,9 +4,6 @@ from bulletclass import *
 class Player(pygame.sprite.Sprite):
 	def __init__(self, x, y, main):
 		pygame.sprite.Sprite.__init__(self)
-		#self.image = pygame.Surface((TILESIZE, TILESIZE))
-		#self.image.fill(GREEN)
-		#self.mask = pygame.mask.from_surface(self.image)
 		self.image = pygame.image.load('img/player/player1p.png')
 		self.rect = self.image.get_rect()
 		self.pos = pygame.math.Vector2((x, y))
@@ -20,6 +17,8 @@ class Player(pygame.sprite.Sprite):
 
 		self.last_shot = 0		#odstep strzelania w czasie
 		self.last_direction = 0	#kierunek w ktorym obrocony jest gracz
+		self.weapon = 1 		#ktora bron uzywa gracz
+
 		self.which_img = 0		#zmienna pomocnicza w wyborze img
 
 	def update(self):
@@ -69,7 +68,7 @@ class Player(pygame.sprite.Sprite):
 			if self.last_direction == 1:
 				self.which_img = 0
 			elif self.last_direction == 0 and self.on_ground == True:
-				self.which_img = (self.which_img + 1)%6
+				self.which_img = (self.which_img + 1) % 6
 
 			self.image = pygame.image.load('img/player/player'+str(self.which_img)+'p.png')
 			self.rect = self.image.get_rect()
@@ -98,6 +97,11 @@ class Player(pygame.sprite.Sprite):
 			pass
 		if (k[pygame.K_SPACE]):
 			self.shoot()
+
+		if (k[pygame.K_1]):
+			self.weapon = 1
+		if (k[pygame.K_2]):
+			self.weapon = 2
 
 	def colls(self):
 		######## KOLIZJE ZE ŚCIANAMI ########
@@ -176,12 +180,25 @@ class Player(pygame.sprite.Sprite):
 	def jump(self):
 		if self.on_ground and self.last_jump == 0:
 			self.on_ground = False
-			self.vel.y = -12
+			self.vel.y = -11
 			self.last_jump = 15
 
 	def shoot(self):
-		if self.last_shot == 0:
-			self.last_shot = 60
-			b = Bullet1(self.last_direction, self.rect.center, 'p')
-			self.main.sprites.add(b)
-			self.main.shots.add(b)
+		if self.weapon == 1:
+			if self.last_shot == 0:
+				self.last_shot = 60
+				b = Bullet(self.last_direction, '0', self.rect.center, 'p')
+				self.main.sprites.add(b)
+				self.main.shots.add(b)
+		elif self.weapon == 2:
+			if self.last_shot == 0:
+				self.last_shot = 60
+				b1 = Bullet(self.last_direction, '0', self.rect.center, 'p')
+				b2 = Bullet(self.last_direction, '1', self.rect.center, 'p')
+				b3 = Bullet(self.last_direction, '2', self.rect.center, 'p')
+				self.main.sprites.add(b1)
+				self.main.sprites.add(b2)
+				self.main.sprites.add(b3)
+				self.main.shots.add(b1)
+				self.main.shots.add(b2)
+				self.main.shots.add(b3)
