@@ -162,20 +162,17 @@ class Player(pygame.sprite.Sprite):
 		######## KOLIZJE Z KOLCAMI ########
 		for s in self.main.spikes:
 			#kolizje od góry
-			if ( (s.rect.top == self.rect.bottom) or (s.rect.top < self.rect.bottom and s.rect.top > self.rect.top) ) and ( (s.rect.left > self.rect.left and s.rect.left < self.rect.right) or (s.rect.left == self.rect.left and s.rect.right == self.rect.right) or (s.rect.left < self.rect.left and s.rect.right > self.rect.left) ):
+			if s.ver == 0 and ( (s.rect.top == self.rect.bottom) or (s.rect.top < self.rect.bottom and s.rect.top > self.rect.top) ) and ( (s.rect.left > self.rect.left and s.rect.left < self.rect.right) or (s.rect.left == self.rect.left and s.rect.right == self.rect.right) or (s.rect.left < self.rect.left and s.rect.right > self.rect.left) ):
 				self.main.game = False
 
-			if (s.rect.bottom > self.rect.top and s.rect.bottom < self.rect.bottom) or \
-			(s.rect.top < self.rect.bottom and s.rect.bottom > self.rect.bottom) or \
-			(s.rect.bottom == self.rect.bottom and s.rect.top == self.rect.top):
-				#kolizja prawego boku
-				if self.rect.right + self.vel.x >= s.rect.left and self.rect.right + self.vel.x < s.rect.right:
-					self.vel.x = (s.rect.left - self.rect.right)
+			if s.ver == 1 and ( (s.rect.left == self.rect.right) or (s.rect.left < self.rect.right and s.rect.right > self.rect.left) ) and ( (s.rect.bottom > self.rect.bottom and s.rect.top < self.rect.bottom) or (s.rect.top == self.rect.top and s.rect.bottom == self.rect.bottom) or (s.rect.bottom < self.rect.bottom and s.rect.bottom > self.rect.top) ):
+				self.main.game = False
 
-				#kolizja lewego boku
-				elif self.rect.left + self.vel.x <= s.rect.right and self.rect.left + self.vel.x > s.rect.left:
-					self.vel.x = (s.rect.right - self.rect.left)
+			if s.ver == 2 and ( (s.rect.bottom == self.rect.top) or (s.rect.top < self.rect.top and s.rect.bottom > self.rect.top) ) and ( (s.rect.left > self.rect.left and s.rect.left < self.rect.right) or (s.rect.left == self.rect.left and s.rect.right == self.rect.right) or (s.rect.left < self.rect.left and s.rect.right > self.rect.left) ):
+				self.main.game = False
 
+			if s.ver == 3 and ( (s.rect.right == self.rect.left) or (s.rect.left < self.rect.left and s.rect.left > self.rect.left) ) and ( (s.rect.bottom > self.rect.bottom and s.rect.top < self.rect.bottom) or (s.rect.top == self.rect.top and s.rect.bottom == self.rect.bottom) or (s.rect.bottom < self.rect.bottom and s.rect.bottom > self.rect.top) ):
+				self.main.game = False
 
 	def jump(self):
 		if self.on_ground and self.last_jump == 0:

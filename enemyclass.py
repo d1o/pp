@@ -97,10 +97,12 @@ class Enemy1(pygame.sprite.Sprite):
 			self.vel.y = -12
 			self.last_jump = 15
 
-class Spikes1(pygame.sprite.Sprite):
-	def __init__(self, x, y, main):
+class Spikes(pygame.sprite.Sprite):
+	def __init__(self, x, y, ver, main):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.image.load('img/enemies/spikes/spikes.png')
+		image = pygame.image.load('img/enemies/spikes/spikes.png')
+		self.ver = ver
+		self.image = pygame.transform.rotate(pygame.image.load('img/enemies/spikes/spikes.png'), self.ver * 90)
 		self.rect = self.image.get_rect()
 		self.pos = pygame.math.Vector2((x, y))
 		self.rect.center = self.pos

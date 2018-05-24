@@ -109,7 +109,7 @@ class Game():
 		self.bonuses = pygame.sprite.Group()		#bonusy z punktami
 		self.weapons = pygame.sprite.Group()		#bonusy z bronia
 		self.enemies = pygame.sprite.Group()		#przeciwnicy
-		self.spikes = pygame.sprite.Group()			#kolce
+		self.spikes = pygame.sprite.Group()		#kolce pionowo w gore
 
 		self.player = Player(WIDTH/2, HEIGHT/2, self)
 		self.sprites.add(self.player)
@@ -129,7 +129,7 @@ class Game():
 			self.enemies.add(self.enemy)
 
 		for s in S:
-			self.spi = Spikes1(s[0], s[1], self)
+			self.spi = Spikes(s[0], s[1], 3, self)
 			self.sprites.add(self.spi)
 			self.spikes.add(self.spi)
 			self.blocks.add(self.spi)
@@ -239,6 +239,5 @@ class Game():
 g = Game()
 while g.running:
 	g.screen()
-
 
 pygame.quit()
