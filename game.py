@@ -75,24 +75,46 @@ class Game():
 				pygame.display.flip()
 
 			else:
-				for e in pygame.event.get():
-					if e.type == QUIT:
-						self.runnig = False
-						sys.exit()
+				if self.lvl_won == True:
+					print('bbb')
+					for e in pygame.event.get():
+						if e.type == QUIT:
+							self.runnig = False
+							sys.exit()
 
-				k = pygame.key.get_pressed()
-				if k[pygame.K_RETURN]: 
-					
-					self.decision = 0
-					self.screen_loop = False
+					k = pygame.key.get_pressed()
+					if k[pygame.K_RETURN]: 
+						
+						self.decision = 0
+						self.screen_loop = False
 
-				self.text_game_over = self.font1.render('GAME OVER', 0, WHITE)
-				self.text_press_ret = self.font2.render('Press return to start...', 0, WHITE)
+					self.text_game_over = self.font1.render('You beat the level!', 0, WHITE)
+					self.text_press_ret = self.font2.render('Press return to start...', 0, WHITE)
 
-				self.WINDOW.fill(BLACK)
-				self.WINDOW.blit(self.text_game_over,(13*WIDTH/40, HEIGHT/5))
-				self.WINDOW.blit(self.text_press_ret,(WIDTH/22, 7*HEIGHT/8))
-				pygame.display.flip()
+					self.WINDOW.fill(GREEN)
+					self.WINDOW.blit(self.text_game_over,(13*WIDTH/40, HEIGHT/5))
+					self.WINDOW.blit(self.text_press_ret,(WIDTH/22, 7*HEIGHT/8))
+					pygame.display.flip()
+
+				else:
+					for e in pygame.event.get():
+						if e.type == QUIT:
+							self.runnig = False
+							sys.exit()
+
+					k = pygame.key.get_pressed()
+					if k[pygame.K_RETURN]: 
+						
+						self.decision = 0
+						self.screen_loop = False
+
+					self.text_game_over = self.font1.render('GAME OVER', 0, WHITE)
+					self.text_press_ret = self.font2.render('Press return to start...', 0, WHITE)
+
+					self.WINDOW.fill(BLACK)
+					self.WINDOW.blit(self.text_game_over,(13*WIDTH/40, HEIGHT/5))
+					self.WINDOW.blit(self.text_press_ret,(WIDTH/22, 7*HEIGHT/8))
+					pygame.display.flip()
 
 		if self.decision == 0:
 			self.start()
@@ -113,6 +135,8 @@ class Game():
 
 		self.player = Player(WIDTH/2, HEIGHT/2, self)
 		self.sprites.add(self.player)
+
+		self.level_won = False
 
 		for b in BLOCKS:
 			self.sprites.add(b)
@@ -191,6 +215,12 @@ class Game():
 
 		######## CZY GRACZ WYPADŁ POZA MAPĘ ########
 		if self.player.pos.y >= len(level) * TILESIZE + 5 * TILESIZE:
+			self.game = False
+
+		######## CZY GRACZ DOTARŁ DO KOŃCA MAPY ########
+		if self.player.rect.right >= LVL_W * TILESIZE - 3 * TILESIZE:
+			print('aaaaaaaa')
+			self.lvl_won = True
 			self.game = False
 
 		######## CZY GRACZ PODNIÓSŁ BONUS/BRON ########

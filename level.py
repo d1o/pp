@@ -17,9 +17,6 @@ destroyable = [BO]
 no_colls = [S1]
 enems = [E1]
 
-LVL_H = 25
-LVL_W = 35
-
 level = [
 	[S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, B1, B1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1],
 	[S1, S1, S1, S1, S1, S1, S1, S1, B1, S1, S1, S1, S1, S1, S1, S1, S1, S1, B1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1, S1],
@@ -44,8 +41,10 @@ level = [
 	[B1, B2, D3, D3, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, B2, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, S1, S1, S1, S1],
 	[B1, B2, D3, D3, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, B2, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, S1, S1, S1, S1],
 	[B1, B2, D3, D3, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, B2, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, D1, S1, S1, S1, S1]
-
 ]
+
+LVL_H = len(level)
+LVL_W = len(level[0])
 
 BLOCKS = pygame.sprite.Group()
 BOXES = pygame.sprite.Group()
