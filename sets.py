@@ -19,7 +19,7 @@ P_ACC = 1
 P_FRI = -0.2
 
 ######## USTAWIENIA PRZECIWNIKOW ########
-E_ACC1 = -1
+E_ACC1 = -0.5
 
 ######## PREDKOSC POCISKOW ########
 B_SPEED_X = 20

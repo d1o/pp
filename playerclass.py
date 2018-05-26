@@ -19,7 +19,7 @@ class Player(pygame.sprite.Sprite):
 		self.last_direction = 0	#kierunek w ktorym obrocony jest gracz
 		self.weapon = 1 		#ktora bron uzywa gracz
 
-		self.which_img = 0		#zmienna pomocnicza w wyborze img
+		self.which_img = 0		#wybor obrazka
 
 	def update(self):
 		self.acc = pygame.math.Vector2((0, GRAVITY))
@@ -68,7 +68,7 @@ class Player(pygame.sprite.Sprite):
 			if self.last_direction == 1:
 				self.which_img = 0
 			elif self.last_direction == 0 and self.on_ground == True:
-				self.which_img = (self.which_img + 1) % 6
+				self.which_img = (self.which_img + 1) % 8
 
 			self.image = pygame.image.load('img/player/player'+str(self.which_img)+'p.png')
 			self.rect = self.image.get_rect()
@@ -83,7 +83,7 @@ class Player(pygame.sprite.Sprite):
 			if self.last_direction == 0:
 				self.which_img = 0
 			elif self.last_direction == 1 and self.on_ground == True:
-				self.which_img = (self.which_img + 1)%6
+				self.which_img = (self.which_img + 1) % 8
 
 			self.image = pygame.image.load('img/player/player'+str(self.which_img)+'l.png')
 			self.rect = self.image.get_rect()

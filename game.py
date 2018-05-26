@@ -19,6 +19,8 @@ class Game():
 		self.running = True
 		self.game = True
 
+		self.lvl_won = False
+
 		self.score = 0
 
 		pygame.font.init()
@@ -76,7 +78,6 @@ class Game():
 
 			else:
 				if self.lvl_won == True:
-					print('bbb')
 					for e in pygame.event.get():
 						if e.type == QUIT:
 							self.runnig = False
@@ -136,7 +137,7 @@ class Game():
 		self.player = Player(WIDTH/2, HEIGHT/2, self)
 		self.sprites.add(self.player)
 
-		self.level_won = False
+		self.lvl_won = False
 
 		for b in BLOCKS:
 			self.sprites.add(b)
@@ -219,8 +220,8 @@ class Game():
 
 		######## CZY GRACZ DOTARŁ DO KOŃCA MAPY ########
 		if self.player.rect.right >= LVL_W * TILESIZE - 3 * TILESIZE:
-			print('aaaaaaaa')
 			self.lvl_won = True
+		if self.lvl_won:
 			self.game = False
 
 		######## CZY GRACZ PODNIÓSŁ BONUS/BRON ########

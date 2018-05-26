@@ -3,8 +3,7 @@ from sets import *
 class Enemy1(pygame.sprite.Sprite):
 	def __init__(self, x, y, main):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.Surface((TILESIZE, TILESIZE))
-		self.image.fill(RED)
+		self.image = pygame.image.load('img/enemies/enemy/enemy0l.png')
 		self.rect = self.image.get_rect()
 		self.pos = pygame.math.Vector2((x, y))
 		self.rect.center = self.pos
@@ -16,7 +15,22 @@ class Enemy1(pygame.sprite.Sprite):
 		self.last_jump = 0		#odstep w czasie miedzy skokami	
 		self.on_ground = True	#skok mozliwy tylko jak postac stoi na podlozu
 
+		#wybor obrazka
+		self.which_img = 0		
+		self.img_dir= 'l'
+
 	def update(self):
+		#zmiana img w trakcie ruchu przeciwnika
+		if self.vel.x > 0:
+			self.img_dir = 'p'
+		else:
+			self.img_dir = 'l'
+
+		self.which_img = (self.which_img + 1) % 8
+		self.image = pygame.image.load('img/enemies/enemy/enemy'+str(self.which_img)+self.img_dir+'.png')
+		self.rect = self.image.get_rect()
+		self.rect.center = self.pos
+
 		self.acc = pygame.math.Vector2((self.enemy_acc, GRAVITY))
 
 		self.acc.x += self.vel.x * P_FRI
