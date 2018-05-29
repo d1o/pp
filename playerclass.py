@@ -165,12 +165,15 @@ class Player(pygame.sprite.Sprite):
 			if s.ver == 0 and ( (s.rect.top == self.rect.bottom) or (s.rect.top < self.rect.bottom and s.rect.top > self.rect.top) ) and ( (s.rect.left > self.rect.left and s.rect.left < self.rect.right) or (s.rect.left == self.rect.left and s.rect.right == self.rect.right) or (s.rect.left < self.rect.left and s.rect.right > self.rect.left) ):
 				self.main.game = False
 
+			#kolizja z lewej
 			if s.ver == 1 and ( (s.rect.left == self.rect.right) or (s.rect.left < self.rect.right and s.rect.right > self.rect.left) ) and ( (s.rect.bottom > self.rect.bottom and s.rect.top < self.rect.bottom) or (s.rect.top == self.rect.top and s.rect.bottom == self.rect.bottom) or (s.rect.bottom < self.rect.bottom and s.rect.bottom > self.rect.top) ):
 				self.main.game = False
 
+			#kolizja od prawej
 			if s.ver == 2 and ( (s.rect.bottom == self.rect.top) or (s.rect.top < self.rect.top and s.rect.bottom > self.rect.top) ) and ( (s.rect.left > self.rect.left and s.rect.left < self.rect.right) or (s.rect.left == self.rect.left and s.rect.right == self.rect.right) or (s.rect.left < self.rect.left and s.rect.right > self.rect.left) ):
 				self.main.game = False
 
+			#kolizja od spodu
 			if s.ver == 3 and ( (s.rect.right == self.rect.left) or (s.rect.left < self.rect.left and s.rect.left > self.rect.left) ) and ( (s.rect.bottom > self.rect.bottom and s.rect.top < self.rect.bottom) or (s.rect.top == self.rect.top and s.rect.bottom == self.rect.bottom) or (s.rect.bottom < self.rect.bottom and s.rect.bottom > self.rect.top) ):
 				self.main.game = False
 

@@ -1,5 +1,5 @@
 from sets import *
-from level import *
+from lvl import *
 from camera import *
 from playerclass import *
 from blockclass import *
@@ -139,25 +139,26 @@ class Game():
 
 		self.lvl_won = False
 
-		for b in BLOCKS:
-			self.sprites.add(b)
-			self.blocks.add(b)
-
-		for bo in B:
-			self.box = Box(bo[0], bo[1], self)
-			self.sprites.add(self.box)
-			self.boxes.add(self.box)
-
-		for e in E:
-			self.enemy = Enemy1(e[0], e[1], self)
-			self.sprites.add(self.enemy)
-			self.enemies.add(self.enemy)
-
-		for s in S:
-			self.spi = Spikes(s[0], s[1], 3, self)
-			self.sprites.add(self.spi)
-			self.spikes.add(self.spi)
-			self.blocks.add(self.spi)
+		for i in range(len(LVL)):
+			for j in range(len(LVL[i])):
+				if LVL[i][j] in COLLS:
+					b = Block(16+j*TILESIZE, 16+i*TILESIZE, LVL[i][j])
+					self.sprites.add(b)
+					self.blocks.add(b)
+				elif LVL[i][j] in DESTRO:
+					b = Box(16+j*TILESIZE, 16+i*TILESIZE, self)
+					self.sprites.add(b)
+					self.boxes.add(b)
+				elif LVL[i][j] in ENEMS:
+					if LVL[i][j] == 'E1':
+						e = Enemy1(16+j*TILESIZE, 16+i*TILESIZE, self)
+						self.sprites.add(e)
+						self.enemies.add(e)
+					if LVL[i][j][0] == 'S':
+						s = Spikes(16+j*TILESIZE, 16+i*TILESIZE, int(LVL[i][j][1]), self)
+						self.sprites.add(s)
+						self.spikes.add(s)
+						self.blocks.add(s)
 
 		self.camera = Camera()
 		self.loop()
@@ -215,7 +216,8 @@ class Game():
 			self.game = False
 
 		######## CZY GRACZ WYPADŁ POZA MAPĘ ########
-		if self.player.pos.y >= len(level) * TILESIZE + 5 * TILESIZE:
+		if self.player.pos.y >= LVL_H * TILESIZE + 5 * TILESIZE:
+			print(True)
 			self.game = False
 
 		######## CZY GRACZ DOTARŁ DO KOŃCA MAPY ########

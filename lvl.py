@@ -1,0 +1,39 @@
+from sets import *
+from blockclass import *
+from enemyclass import *
+
+LVL = [
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','E1','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','B2','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','S2','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','B2','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BO','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','S0','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BO','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BO','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','D3','D4','BG','BG','BG','BG','BG','BG','B2','BG','BG','BO','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BO','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BO','BG','BG','D2','BG','E1','BG','BG','B1','BG','S1','B1','S3','BG','BO','E1','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','S1'],
+	['D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','BG','BG','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1','D1'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','S3','BG','BG','BG','BG','BG','BG','BG','S1','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','D1','D1','D1','D1','D1','D1','D1','D1','D1','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG'],
+	['BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG','BG']
+]
+
+LVL_H = len(LVL)
+LVL_W = len(LVL[0])
+
+COLLS = ['D1', 'D2', 'D3', 'D4', 'B1', 'B2']
+DESTRO = ['BO']
+NO_COLLS = ['BG']
+ENEMS = ['E1','S0','S1','S2','S3']

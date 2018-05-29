@@ -3,9 +3,20 @@ from sets import *
 class Block(pygame.sprite.Sprite):
 	def __init__(self, x, y, img):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = img
-		#self.image = pygame.image.load(img)
-		#self.image.fill(color)
+		if img =='D1':
+			self.path = 'img/tiles/dirt1.png'
+		elif img == 'D2':
+			self.path = 'img/tiles/dirt2.png'
+		elif img == 'D3':
+			self.path = 'img/tiles/dirt3.png'
+		elif img == 'D4':
+			self.path = 'img/tiles/dirt4.png'
+		elif img == 'B1':
+			self.path = 'img/tiles/bricks1.png'
+		elif img == 'B2':
+			self.path = 'img/tiles/bricks2.png'
+
+		self.image = pygame.image.load(self.path)
 		self.rect = self.image.get_rect()
 		self.pos = pygame.math.Vector2((x, y))
 		self.rect.center = self.pos
