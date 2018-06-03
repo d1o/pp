@@ -1,4 +1,6 @@
 from sets import *
+import math
+from bulletclass import *
 
 class Enemy1(pygame.sprite.Sprite):
 	def __init__(self, x, y, main):
@@ -48,7 +50,7 @@ class Enemy1(pygame.sprite.Sprite):
 			self.last_jump -= 1
 
 	def colls(self):
-		for b in self.main.blocks:
+		for b in self.main.cls:
 			if (b.rect.bottom > self.rect.top and b.rect.bottom < self.rect.bottom) or \
 			(b.rect.top < self.rect.bottom and b.rect.bottom > self.rect.bottom) or \
 			(b.rect.bottom == self.rect.bottom and b.rect.top == self.rect.top):
@@ -111,13 +113,44 @@ class Enemy1(pygame.sprite.Sprite):
 			self.vel.y = -12
 			self.last_jump = 15
 
+##################################################
+
 class Spikes(pygame.sprite.Sprite):
 	def __init__(self, x, y, ver, main):
 		pygame.sprite.Sprite.__init__(self)
-		image = pygame.image.load('img/enemies/spikes/spikes.png')
 		self.ver = ver
 		self.image = pygame.transform.rotate(pygame.image.load('img/enemies/spikes/spikes.png'), self.ver * 90)
 		self.rect = self.image.get_rect()
 		self.pos = pygame.math.Vector2((x, y))
 		self.rect.center = self.pos
 		self.main = main
+
+##################################################
+
+class Turret(pygame.sprite.Sprite):
+	def __init__(self, x, y, main):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.image.load('img/enemies/turret/turret1.png')
+		self.rect = self.image.get_rect()
+		self.pos = pygame.math.Vector2((x, y))
+		self.rect.center = self.pos
+		self.main = main
+
+		self.wait_for_shoot = 0
+		self.lives = 1
+
+	def update(self):
+		self.wait_for_shoot += 1
+		if self.wait_for_shoot and math.fabs(self.main.player.pos.x - self.pos.x) < 8 * TILESIZE and self.main.player.rect.bottom <= self.rect.bottom and self.wait_for_shoot > 60:
+			x = self.main.player.pos.x - self.pos.x
+			y = self.main.player.pos.y - self.pos.y
+			a = math.atan2(y, x)
+			b = Bullet(10*math.cos(a), 10*math.sin(a), self.rect.center, 't')
+			self.main.sprites.add(b)
+			self.main.shots.add(b)
+			self.wait_for_shoot = 0
+
+		if self.lives != 1:
+			self.image = pygame.image.load('img/enemies/turret/turret2.png')
+			self.rect = self.image.get_rect()
+			self.rect.center = self.pos

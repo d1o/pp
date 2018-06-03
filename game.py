@@ -132,12 +132,20 @@ class Game():
 		self.bonuses = pygame.sprite.Group()		#bonusy z punktami
 		self.weapons = pygame.sprite.Group()		#bonusy z bronia
 		self.enemies = pygame.sprite.Group()		#przeciwnicy
-		self.spikes = pygame.sprite.Group()		#kolce pionowo w gore
+		self.spikes = pygame.sprite.Group()			#kolce
+		self.turrets = pygame.sprite.Group()		#wiezyczki
+
+		self.cls = pygame.sprite.Group()			#sprite, z ktorymi gracz i przeciwnicy moga kolidowac
 
 		self.player = Player(WIDTH/2, HEIGHT/2, self)
 		self.sprites.add(self.player)
 
 		self.lvl_won = False
+
+		COLLS = ['D1', 'D2', 'D3', 'D4', 'B1', 'B2']
+		DESTRO = ['BO']
+		NO_COLLS = ['BG']
+		ENEMS = ['E1','S0','S1','S2','S3','T0']
 
 		for i in range(len(LVL)):
 			for j in range(len(LVL[i])):
@@ -145,10 +153,12 @@ class Game():
 					b = Block(16+j*TILESIZE, 16+i*TILESIZE, LVL[i][j])
 					self.sprites.add(b)
 					self.blocks.add(b)
+					self.cls.add(b)
 				elif LVL[i][j] in DESTRO:
 					b = Box(16+j*TILESIZE, 16+i*TILESIZE, self)
 					self.sprites.add(b)
 					self.boxes.add(b)
+					self.cls.add(b)
 				elif LVL[i][j] in ENEMS:
 					if LVL[i][j] == 'E1':
 						e = Enemy1(16+j*TILESIZE, 16+i*TILESIZE, self)
@@ -159,6 +169,11 @@ class Game():
 						self.sprites.add(s)
 						self.spikes.add(s)
 						self.blocks.add(s)
+					if LVL[i][j] == 'T0':
+						t = Turret(16+j*TILESIZE, 16+i*TILESIZE, self)
+						self.sprites.add(t)
+						self.turrets.add(t)
+						self.cls.add(t)
 
 		self.camera = Camera()
 		self.loop()
@@ -196,19 +211,42 @@ class Game():
 		######## CZY POCISK TRAFIŁ W SKRZYNKĘ ########
 		for bo in self.boxes:
 			shots_box_coll = pygame.sprite.spritecollide(bo, self.shots, True)
-			if shots_box_coll:
-				if bo.shots < 2: bo.shots += random.randint(1,2)
-				else: 
-					self.bonus(bo.rect.center, 'box')
-					bo.kill()
+			#if shots_box_coll:
+			for s in shots_box_coll:
+				if s.who == 'p':
+					if bo.shots < 2: bo.shots += random.randint(1,2)
+					else: 
+						self.bonus(bo.rect.center, 'box')
+						bo.kill()
 
 		######## CZY POCISK TRAFIŁ W PRZECIWNIKA ########
 		for e in self.enemies:
 			shots_enemies_colls = pygame.sprite.spritecollide(e, self.shots, True)
-			if shots_enemies_colls:
-				self.score += 50
-				self.bonus(e.rect.center, 'enemy')
-				e.kill()
+			#if shots_enemies_colls:
+			for s in shots_enemies_colls:
+				if s.who == 'p':
+					self.score += 50
+					self.bonus(e.rect.center, 'enemy')
+					e.kill()
+
+		######## CZY POCISK TRAFIŁ W WIEŻYCZKĘ ########
+		for t in self.turrets:
+			shots_turrets_colls = pygame.sprite.spritecollide(t, self.shots, False)
+			#if shots_enemies_colls:
+			for s in shots_turrets_colls:
+				if s.who == 'p':
+					s.kill()
+					if t.lives > 0: t.lives -= 1
+					else:
+						self.score += 75
+						self.bonus(t.rect.center, 'enemy')
+						t.kill()
+
+		######## CZY GRACZ ZOSTAŁ TRAFIONY PRZEZ PRZECIWNIKA ########
+		shots_playernemies_colls = pygame.sprite.spritecollide(self.player, self.shots, False)
+		for s in shots_playernemies_colls:
+			if s.who != 'p':
+				self.game = False
 
 		######## CZY PRZECIWNIK TRAFIŁ NA GRACZA ########
 		player_enemies_colls = pygame.sprite.spritecollide(self.player, self.enemies, False)
