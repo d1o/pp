@@ -134,33 +134,46 @@ class Game():
 		self.enemies = pygame.sprite.Group()		#przeciwnicy
 		self.spikes = pygame.sprite.Group()			#kolce
 		self.turrets = pygame.sprite.Group()		#wiezyczki
+		self.platforms = pygame.sprite.Group()		#platformy
+		self.ladders = pygame.sprite.Group()		#drabiny
+		self.jumps = pygame.sprite.Group()			#jumppady
 
 		self.cls = pygame.sprite.Group()			#sprite, z ktorymi gracz i przeciwnicy moga kolidowac
 
-		self.player = Player(WIDTH/2, HEIGHT/2, self)
-		self.sprites.add(self.player)
-
 		self.lvl_won = False
 
-		COLLS = ['D1', 'D2', 'D3', 'D4', 'B1', 'B2']
+		COLLS = ['D1', 'D2', 'D3', 'D4', 'B1', 'B2', 'WO', 'JU']
+		PLATFORMS = ['DP', 'BP', 'WP']
 		DESTRO = ['BO']
 		NO_COLLS = ['BG']
-		ENEMS = ['E1','S0','S1','S2','S3','T0']
+		ENEMS = ['EE','S0','S1','S2','S3','T0']
 
 		for i in range(len(LVL)):
 			for j in range(len(LVL[i])):
+				if LVL[i][j] == 'P0':
+					self.player = Player(16+j*TILESIZE, 16+i*TILESIZE, self)
+					self.sprites.add(self.player)
 				if LVL[i][j] in COLLS:
 					b = Block(16+j*TILESIZE, 16+i*TILESIZE, LVL[i][j])
 					self.sprites.add(b)
 					self.blocks.add(b)
 					self.cls.add(b)
+					if LVL[i][j] == 'JU':
+						self.jumps.add(b)
+
+				elif LVL[i][j][0] == 'C' and  LVL[i][j][1].isdigit():
+					c = Coin(16+j*TILESIZE, 16+i*TILESIZE, LVL[i][j])
+					self.sprites.add(c)
+					self.bonuses.add(c)
+
 				elif LVL[i][j] in DESTRO:
 					b = Box(16+j*TILESIZE, 16+i*TILESIZE, self)
 					self.sprites.add(b)
 					self.boxes.add(b)
 					self.cls.add(b)
+
 				elif LVL[i][j] in ENEMS:
-					if LVL[i][j] == 'E1':
+					if LVL[i][j] == 'EE':
 						e = Enemy1(16+j*TILESIZE, 16+i*TILESIZE, self)
 						self.sprites.add(e)
 						self.enemies.add(e)
@@ -174,6 +187,12 @@ class Game():
 						self.sprites.add(t)
 						self.turrets.add(t)
 						self.cls.add(t)
+
+				elif LVL[i][j] in PLATFORMS:
+					p = Platform(16+j*TILESIZE, 16+i*TILESIZE, LVL[i][j], self)
+					self.sprites.add(p)
+					self.platforms.add(p)
+					self.cls.add(p)
 
 		self.camera = Camera()
 		self.loop()
@@ -221,10 +240,11 @@ class Game():
 
 		######## CZY POCISK TRAFIŁ W PRZECIWNIKA ########
 		for e in self.enemies:
-			shots_enemies_colls = pygame.sprite.spritecollide(e, self.shots, True)
+			shots_enemies_colls = pygame.sprite.spritecollide(e, self.shots, False)
 			#if shots_enemies_colls:
 			for s in shots_enemies_colls:
 				if s.who == 'p':
+					s.kill()
 					self.score += 50
 					self.bonus(e.rect.center, 'enemy')
 					e.kill()
@@ -255,13 +275,11 @@ class Game():
 
 		######## CZY GRACZ WYPADŁ POZA MAPĘ ########
 		if self.player.pos.y >= LVL_H * TILESIZE + 5 * TILESIZE:
-			print(True)
 			self.game = False
 
 		######## CZY GRACZ DOTARŁ DO KOŃCA MAPY ########
-		if self.player.rect.right >= LVL_W * TILESIZE - 3 * TILESIZE:
+		if self.player.rect.right >= LVL_W * TILESIZE - 3 * TILESIZE and self.player.on_ground:
 			self.lvl_won = True
-		if self.lvl_won:
 			self.game = False
 
 		######## CZY GRACZ PODNIÓSŁ BONUS/BRON ########
@@ -278,21 +296,14 @@ class Game():
 		wpn = Weapon(pos, random.randint(1,2))
 		if who == 'box':
 			if random.randint(1,3) == 1:
-				if random.randint(1,2) == 1:	#wybiera czy bonus punktowy czy bron
-					self.sprites.add(bns)
-					self.bonuses.add(bns)
-				else:
-					self.sprites.add(wpn)
-					self.weapons.add(wpn)
+				self.sprites.add(wpn)
+				self.weapons.add(wpn)
 
 		elif who == 'enemy':
 			if random.randint(1,5) == 1:
-				if random.randint(1,2) == 1:	#wybiera czy bonus punktowy czy bron
-					self.sprites.add(bns)
-					self.bonuses.add(bns)
-				else:
-					self.sprites.add(wpn)
-					self.weapons.add(wpn)
+				self.sprites.add(bns)
+				self.bonuses.add(bns)
+
 
 	def draw(self):
 		self.WINDOW.fill(WHITE)

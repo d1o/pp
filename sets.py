@@ -24,3 +24,6 @@ E_ACC1 = -0.5
 ######## PREDKOSC POCISKOW ########
 B_SPEED_X = 20
 B_SPEED_Y = 3
+
+######## USTAWIENIA PLATFORM ########
+PL_VEL = 1.8

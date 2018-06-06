@@ -12,14 +12,14 @@ class Player(pygame.sprite.Sprite):
 		self.acc = pygame.math.Vector2((0, 0))
 		self.main = main
 
-		self.last_jump = 0		#odstep w czasie miedzy skokami	
-		self.on_ground = True	#skok mozliwy tylko jak gracz stoi na podlozu
+		self.last_jump = 0					#odstep w czasie miedzy skokami	
+		self.on_ground = True				#skok mozliwy tylko jak gracz stoi na podlozu
 
-		self.last_shot = 0		#odstep strzelania w czasie
-		self.last_direction = B_SPEED_X	#kierunek w ktorym obrocony jest gracz
-		self.weapon = 1 		#ktora bron uzywa gracz
+		self.last_shot = 0					#odstep strzelania w czasie
+		self.last_direction = B_SPEED_X		#kierunek w ktorym obrocony jest gracz
+		self.weapon = 1 					#ktora bron uzywa gracz
 
-		self.which_img = 0		#wybor obrazka
+		self.which_img = 0					#wybor obrazka
 
 	def update(self):
 		self.acc = pygame.math.Vector2((0, GRAVITY))
@@ -35,10 +35,12 @@ class Player(pygame.sprite.Sprite):
 				self.image = pygame.image.load('img/player/player0p.png')
 				self.rect = self.image.get_rect()
 				self.rect.center = self.pos
+				self.which_img = 0
 			else:
 				self.image = pygame.image.load('img/player/player0l.png')
 				self.rect = self.image.get_rect()
 				self.rect.center = self.pos
+				self.which_img = 0
 
 		#obliczanie kroku
 		self.acc.x += self.vel.x * P_FRI
@@ -47,6 +49,8 @@ class Player(pygame.sprite.Sprite):
 		self.colls()
 
 		self.pos += self.vel
+
+
 		self.rect.center = self.pos
 
 		#przyspieszenie grawitacyjne
@@ -123,14 +127,23 @@ class Player(pygame.sprite.Sprite):
 			(b.rect.right == self.rect.right and b.rect.left == self.rect.left):
 				#kolizja spodu
 				if self.rect.bottom + self.vel.y >= b.rect.top and self.rect.bottom + self.vel.y < b.rect.bottom:
-					self.vel.y = (b.rect.top - self.rect.bottom)
-					if not self.on_ground and self.vel.y >= 0:
-						self.on_ground = True
+					if b in self.main.jumps:
+						self.vel.y = -20
+					else:
+						self.vel.y = (b.rect.top - self.rect.bottom)
+						if not self.on_ground and self.vel.y >= 0:
+							self.on_ground = True
 
 				#kolizja góry
 				elif self.rect.top + self.vel.y <= b.rect.bottom and self.rect.top + self.vel.y > b.rect.top:
 					self.vel.y = (b.rect.bottom - self.rect.top)
 
+			#gdy gracz stoi na platformie
+			if b in self.main.platforms:
+				if self.rect.bottom == b.rect.top and self.rect.left >= b.rect.left and self.rect.right <= b.rect.right:
+					self.pos.x += b.v/2
+
+		######## KOLIZJE Z KOLCAMI ########
 		for b in self.main.spikes:
 			if (b.rect.bottom > self.rect.top and b.rect.bottom < self.rect.bottom) or \
 			(b.rect.top < self.rect.bottom and b.rect.bottom > self.rect.bottom) or \
@@ -155,52 +168,22 @@ class Player(pygame.sprite.Sprite):
 				elif self.rect.top + self.vel.y <= b.rect.bottom and self.rect.top + self.vel.y > b.rect.top:
 					self.vel.y = (b.rect.bottom - self.rect.top)
 
-
-		######## KOLIZJE ZE SKRZYNKAMI ########
-		'''for b in self.main.boxes:
-			if (b.rect.bottom > self.rect.top and b.rect.bottom < self.rect.bottom) or \
-			(b.rect.top < self.rect.bottom and b.rect.bottom > self.rect.bottom) or \
-			(b.rect.bottom == self.rect.bottom and b.rect.top == self.rect.top):
-				#kolizja prawego boku
-				if self.rect.right + self.vel.x >= b.rect.left and self.rect.right + self.vel.x < b.rect.right:
-					self.vel.x = (b.rect.left - self.rect.right)
-
-				#kolizja lewego boku
-				elif self.rect.left + self.vel.x <= b.rect.right and self.rect.left + self.vel.x > b.rect.left:
-					self.vel.x = (b.rect.right - self.rect.left)
-
-			
-			elif (b.rect.right > self.rect.left and b.rect.left < self.rect.right) or \
-			(b.rect.left < self.rect.right and b.rect.right > self.rect.right) or \
-			(b.rect.right == self.rect.right and b.rect.left == self.rect.left):
-				#kolizja spodu
-				if self.rect.bottom + self.vel.y >= b.rect.top and self.rect.bottom + self.vel.y < b.rect.bottom:
-					self.vel.y = (b.rect.top - self.rect.bottom)
-					if not self.on_ground and self.vel.y >= 0:
-						self.on_ground = True
-
-				#kolizja góry
-				elif self.rect.top + self.vel.y <= b.rect.bottom and self.rect.top + self.vel.y > b.rect.top:
-					self.vel.y = (b.rect.bottom - self.rect.top)'''
-
-
-		######## KOLIZJE Z KOLCAMI ########
-		for s in self.main.spikes:
 			#kolizje od góry
-			if s.ver == 0 and ( (s.rect.top == self.rect.bottom) or (s.rect.top < self.rect.bottom and s.rect.top > self.rect.top) ) and ( (s.rect.left > self.rect.left and s.rect.left < self.rect.right) or (s.rect.left == self.rect.left and s.rect.right == self.rect.right) or (s.rect.left < self.rect.left and s.rect.right > self.rect.left) ):
+			if b.ver == 0 and ( (b.rect.top == self.rect.bottom) or (b.rect.top < self.rect.bottom and b.rect.top > self.rect.top) ) and ( (b.rect.left > self.rect.left and b.rect.left < self.rect.right) or (b.rect.left == self.rect.left and b.rect.right == self.rect.right) or (b.rect.left < self.rect.left and b.rect.right > self.rect.left) ):
 				self.main.game = False
 
 			#kolizja z lewej
-			if s.ver == 1 and ( (s.rect.left == self.rect.right) or (s.rect.left < self.rect.right and s.rect.right > self.rect.left) ) and ( (s.rect.bottom > self.rect.bottom and s.rect.top < self.rect.bottom) or (s.rect.top == self.rect.top and s.rect.bottom == self.rect.bottom) or (s.rect.bottom < self.rect.bottom and s.rect.bottom > self.rect.top) ):
+			if b.ver == 1 and ( (b.rect.left == self.rect.right) or (b.rect.left < self.rect.right and b.rect.right > self.rect.left) ) and ( (b.rect.bottom > self.rect.bottom and b.rect.top < self.rect.bottom) or (b.rect.top == self.rect.top and b.rect.bottom == self.rect.bottom) or (b.rect.bottom < self.rect.bottom and b.rect.bottom > self.rect.top) ):
 				self.main.game = False
 
 			#kolizja od prawej
-			if s.ver == 2 and ( (s.rect.bottom == self.rect.top) or (s.rect.top < self.rect.top and s.rect.bottom > self.rect.top) ) and ( (s.rect.left > self.rect.left and s.rect.left < self.rect.right) or (s.rect.left == self.rect.left and s.rect.right == self.rect.right) or (s.rect.left < self.rect.left and s.rect.right > self.rect.left) ):
+			if b.ver == 2 and ( (b.rect.bottom == self.rect.top) or (b.rect.top < self.rect.top and b.rect.bottom > self.rect.top) ) and ( (b.rect.left > self.rect.left and b.rect.left < self.rect.right) or (b.rect.left == self.rect.left and b.rect.right == self.rect.right) or (b.rect.left < self.rect.left and b.rect.right > self.rect.left) ):
 				self.main.game = False
 
 			#kolizja od spodu
-			if s.ver == 3 and ( (s.rect.right == self.rect.left) or (s.rect.left < self.rect.left and s.rect.left > self.rect.left) ) and ( (s.rect.bottom > self.rect.bottom and s.rect.top < self.rect.bottom) or (s.rect.top == self.rect.top and s.rect.bottom == self.rect.bottom) or (s.rect.bottom < self.rect.bottom and s.rect.bottom > self.rect.top) ):
+			if b.ver == 3 and ( (b.rect.right == self.rect.left) or (b.rect.left < self.rect.left and b.rect.left > self.rect.left) ) and ( (b.rect.bottom > self.rect.bottom and b.rect.top < self.rect.bottom) or (b.rect.top == self.rect.top and b.rect.bottom == self.rect.bottom) or (b.rect.bottom < self.rect.bottom and b.rect.bottom > self.rect.top) ):
 				self.main.game = False
+
 
 	def jump(self):
 		if self.on_ground and self.last_jump == 0:
