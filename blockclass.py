@@ -4,19 +4,17 @@ class Block(pygame.sprite.Sprite):
 	def __init__(self, x, y, img):
 		pygame.sprite.Sprite.__init__(self)
 		if img =='D1':
-			self.path = 'img/tiles/dirt1.png'
+			self.path = 'img/tiles/ground/d1.png'
 		elif img == 'D2':
-			self.path = 'img/tiles/dirt2.png'
+			self.path = 'img/tiles/ground/d2.png'
 		elif img == 'D3':
-			self.path = 'img/tiles/dirt3.png'
-		elif img == 'D4':
-			self.path = 'img/tiles/dirt4.png'
+			self.path = 'img/tiles/ground/d3.png'
 		elif img == 'B1':
-			self.path = 'img/tiles/bricks1.png'
+			self.path = 'img/tiles/bricks/b1.png'
 		elif img == 'B2':
-			self.path = 'img/tiles/bricks2.png'
+			self.path = 'img/tiles/bricks/b2.png'
 		elif img == 'WO':
-			self.path = 'img/tiles/wood.png'
+			self.path = 'img/tiles/wood/wo.png'
 		elif img == 'JU':
 			self.path = 'img/oth/jumps.png'
 
@@ -30,7 +28,7 @@ class Block(pygame.sprite.Sprite):
 class Box(pygame.sprite.Sprite):
 	def __init__(self, x, y, main):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.image.load('img/tiles/box11.png')
+		self.image = pygame.image.load('img/tiles/box/bo1.png')
 		self.rect = self.image.get_rect()
 		self.pos = pygame.math.Vector2((x, y))
 		self.rect.center = self.pos
@@ -42,9 +40,9 @@ class Box(pygame.sprite.Sprite):
 
 	def update(self):
 		if self.shots == 1:
-			self.image = pygame.image.load('img/tiles/box12.png')
+			self.image = pygame.image.load('img/tiles/box/bo2.png')
 		if self.shots >= 2:
-			self.image = pygame.image.load('img/tiles/box13.png')
+			self.image = pygame.image.load('img/tiles/box/bo3.png')
 		self.rect = self.image.get_rect()
 		self.rect.center = self.pos
 
@@ -72,11 +70,11 @@ class Platform(pygame.sprite.Sprite):
 	def __init__(self, x, y, mode, main):
 		pygame.sprite.Sprite.__init__(self)
 		if mode == 'DP':
-			self.image = pygame.image.load('img/tiles/dirtpla.png')
+			self.image = pygame.image.load('img/tiles/platforms/dirtpla.png')
 		elif mode == 'BP':
-			self.image = pygame.image.load('img/tiles/brickspla.png')
+			self.image = pygame.image.load('img/tiles/platforms/brickspla.png')
 		elif mode == 'WP':
-			self.image = pygame.image.load('img/tiles/woodpla.png')
+			self.image = pygame.image.load('img/tiles/platforms/wp.png')
 			
 		self.rect = self.image.get_rect()
 		self.pos = pygame.math.Vector2((x, y))
@@ -98,3 +96,12 @@ class Platform(pygame.sprite.Sprite):
 
 ##################################################
 
+class Doors(pygame.sprite.Sprite):
+	def __init__(self, x, y, main):
+			pygame.sprite.Sprite.__init__(self)
+			self.image = pygame.image.load('img/oth/do.png')
+			self.rect = self.image.get_rect()
+			self.pos = pygame.math.Vector2((x, y))
+			self.rect.topleft = self.pos
+			self.main = main
+			self.opened = False

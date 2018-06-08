@@ -1,5 +1,4 @@
 from sets import *
-import random
 
 class Bonus(pygame.sprite.Sprite):
 	#dodatkowe punkty
@@ -10,10 +9,16 @@ class Bonus(pygame.sprite.Sprite):
 		self.rect.center = pos
 
 		#liczba punktow za pdoniesienie
-		if who == 'box':
-			self.pts = 50
-		elif who == 'enemy':
-			self.pts = 100
+		self.pts = 100
+
+class Key(pygame.sprite.Sprite):
+	#dodatkowe punkty
+	def __init__(self, x, y):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.image.load('img/oth/key.png')
+		self.rect = self.image.get_rect()
+		self.pos = pygame.math.Vector2((x,y))
+		self.rect.center = self.pos
 
 class Weapon(pygame.sprite.Sprite):
 	def __init__(self, pos, v):

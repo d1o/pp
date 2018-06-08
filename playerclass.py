@@ -21,8 +21,19 @@ class Player(pygame.sprite.Sprite):
 
 		self.which_img = 0					#wybor obrazka
 
+		self.keys = 0						#posiadane przez gracza klucze
+		self.near_to_doors = False			#czy mozna otworzyc drzwi
+
 	def update(self):
 		self.acc = pygame.math.Vector2((0, GRAVITY))
+		for d in self.main.doors:
+			if math.fabs(self.pos.x - d.pos.x) <= 3 * TILESIZE and math.fabs(self.pos.y - d.pos.y) <= 3 * TILESIZE:
+				self.near_to_doors = True
+				self.doors_to_open = d
+			else:
+				self.near_to_doors = False
+				self.doors_to_open = 0
+
 		self.controls()
 
 		#zatrzymywanie postaci w miejscu
@@ -102,6 +113,9 @@ class Player(pygame.sprite.Sprite):
 		if (k[pygame.K_SPACE]):
 			self.shoot()
 
+		if (k[pygame.K_f]) and self.near_to_doors and self.keys > 0:
+			self.main.open_doors(self.doors_to_open)
+
 		if (k[pygame.K_1]):
 			self.weapon = 1
 		if (k[pygame.K_2]):
@@ -120,15 +134,15 @@ class Player(pygame.sprite.Sprite):
 				#kolizja lewego boku
 				elif self.rect.left + self.vel.x <= b.rect.right and self.rect.left + self.vel.x > b.rect.left:
 					self.vel.x = (b.rect.right - self.rect.left)
-
 			
 			elif (b.rect.right > self.rect.left and b.rect.left < self.rect.right) or \
 			(b.rect.left < self.rect.right and b.rect.right > self.rect.right) or \
 			(b.rect.right == self.rect.right and b.rect.left == self.rect.left):
 				#kolizja spodu
 				if self.rect.bottom + self.vel.y >= b.rect.top and self.rect.bottom + self.vel.y < b.rect.bottom:
-					if b in self.main.jumps:
+					if b in self.main.jumps:	#gdy gracz stanie na jump padzie
 						self.vel.y = -20
+						self.on_ground = False
 					else:
 						self.vel.y = (b.rect.top - self.rect.bottom)
 						if not self.on_ground and self.vel.y >= 0:

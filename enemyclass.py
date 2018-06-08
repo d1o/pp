@@ -1,5 +1,4 @@
 from sets import *
-import math
 from bulletclass import *
 
 class Enemy1(pygame.sprite.Sprite):
@@ -112,7 +111,7 @@ class Turret(pygame.sprite.Sprite):
 
 	def update(self):
 		self.wait_for_shoot += 1
-		if self.wait_for_shoot and math.fabs(self.main.player.pos.x - self.pos.x) < 8 * TILESIZE and self.main.player.rect.bottom <= self.rect.bottom and self.wait_for_shoot > 60:
+		if self.wait_for_shoot and math.fabs(self.main.player.pos.x - self.pos.x) < 10 * TILESIZE and self.main.player.rect.bottom <= self.rect.bottom and self.wait_for_shoot > 60:
 			x = self.main.player.pos.x - self.pos.x
 			y = self.main.player.pos.y - self.pos.y
 			a = math.atan2(y, x)
@@ -125,3 +124,29 @@ class Turret(pygame.sprite.Sprite):
 			self.image = pygame.image.load('img/enemies/turret/turret2.png')
 			self.rect = self.image.get_rect()
 			self.rect.center = self.pos
+
+class Turret2(pygame.sprite.Sprite):
+	def __init__(self, x, y, mode, main):
+		pygame.sprite.Sprite.__init__(self)
+		self.mode = int(mode)
+		if self.mode == 0:
+			self.image = pygame.image.load('img/enemies/turret/tu.png')
+		else:
+			self.image = pygame.transform.flip(pygame.image.load('img/enemies/turret/tu.png'), True, False)
+		self.rect = self.image.get_rect()
+		self.pos = pygame.math.Vector2((x, y))
+		self.rect.center = self.pos
+		self.main = main
+		
+		self.wait_for_shoot = 0
+
+	def update(self):
+		self.wait_for_shoot += 1
+		if self.wait_for_shoot > 75:
+			if self.mode == 0:
+				b = Bullet(-B_SPEED_X/2, 0, self.rect.center, 't')
+			else:
+				b = Bullet(B_SPEED_X/2, 0, self.rect.center, 't')
+			self.main.sprites.add(b)
+			self.main.shots.add(b)
+			self.wait_for_shoot = 0
