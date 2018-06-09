@@ -32,7 +32,7 @@ class Enemy1(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.rect.center = self.pos
 
-		self.acc = pygame.math.Vector2((self.enemy_acc, GRAVITY))
+		self.acc = pygame.math.Vector2((self.enemy_acc, 0))
 
 		self.acc.x += self.vel.x * P_FRI
 		self.vel.x += self.acc.x
@@ -45,43 +45,19 @@ class Enemy1(pygame.sprite.Sprite):
 		if self.vel.y <= 15:
 			self.vel.y += self.acc.y
 
-		if self.on_ground and self.last_jump > 0:
-			self.last_jump -= 1
-
 	def colls(self):
-		for b in self.main.cls:
-			if (b.rect.bottom > self.rect.top and b.rect.bottom < self.rect.bottom) or \
-			(b.rect.top < self.rect.bottom and b.rect.bottom > self.rect.bottom) or \
-			(b.rect.bottom == self.rect.bottom and b.rect.top == self.rect.top):
-				#kolizja prawego boku
-				if self.rect.right + self.vel.x >= b.rect.left and self.rect.right + self.vel.x < b.rect.right:
-					self.vel.x = (b.rect.left - self.rect.right)
-					self.enemy_acc *= -1
-
-				#kolizja lewego boku
-				elif self.rect.left + self.vel.x <= b.rect.right and self.rect.left + self.vel.x > b.rect.left:
-					self.vel.x = (b.rect.right - self.rect.left)
-					self.enemy_acc *= -1
-
-			
-			elif (b.rect.right > self.rect.left and b.rect.left < self.rect.right) or \
-			(b.rect.left < self.rect.right and b.rect.right > self.rect.right) or \
-			(b.rect.right == self.rect.right and b.rect.left == self.rect.left):
-				#kolizja spodu
-				if self.rect.bottom + self.vel.y >= b.rect.top and self.rect.bottom + self.vel.y < b.rect.bottom:
-					self.vel.y = (b.rect.top - self.rect.bottom)
-					if not self.on_ground and self.vel.y >= 0:
-						self.on_ground = True
-
-				#kolizja góry
-				elif self.rect.top + self.vel.y <= b.rect.bottom and self.rect.top + self.vel.y > b.rect.top:
-					self.vel.y = (b.rect.bottom - self.rect.top)
-
-	def jump(self):
-		if self.on_ground and self.last_jump == 0:
-			self.on_ground = False
-			self.vel.y = -12
-			self.last_jump = 15
+		blocks_hit_list = pygame.sprite.spritecollide(self, self.main.cls, False)
+		if blocks_hit_list:
+			for s in blocks_hit_list:
+				if self.rect.left < s.rect.right and self.rect.right > s.rect.right:
+					self.rect.left = s.rect.right
+				elif self.rect.right > s.rect.left and self.rect.left < s.rect.left:
+					self.rect.right = s.rect.left
+				self.vel.x *= -1
+				self.enemy_acc *= -1
+				
+				if self.rect.bottom >= s.rect.top and self.rect.top < s.rect.top:
+					self.rect.bottom = s.rect.top
 
 ##################################################
 
@@ -139,6 +115,7 @@ class Turret2(pygame.sprite.Sprite):
 		self.main = main
 		
 		self.wait_for_shoot = 0
+		self.lives = 1
 
 	def update(self):
 		self.wait_for_shoot += 1
@@ -150,3 +127,12 @@ class Turret2(pygame.sprite.Sprite):
 			self.main.sprites.add(b)
 			self.main.shots.add(b)
 			self.wait_for_shoot = 0
+
+		if self.lives != 1:
+			if self.mode == 0:
+				self.image = pygame.image.load('img/enemies/turret/tu2.png')
+			else:
+				self.image = pygame.transform.flip(pygame.image.load('img/enemies/turret/tu2.png'), True, False)
+
+			self.rect = self.image.get_rect()
+			self.rect.center = self.pos

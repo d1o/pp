@@ -29,10 +29,8 @@ class Player(pygame.sprite.Sprite):
 		for d in self.main.doors:
 			if math.fabs(self.pos.x - d.pos.x) <= 3 * TILESIZE and math.fabs(self.pos.y - d.pos.y) <= 3 * TILESIZE:
 				self.near_to_doors = True
-				self.doors_to_open = d
 			else:
 				self.near_to_doors = False
-				self.doors_to_open = 0
 
 		self.controls()
 
@@ -114,7 +112,7 @@ class Player(pygame.sprite.Sprite):
 			self.shoot()
 
 		if (k[pygame.K_f]) and self.near_to_doors and self.keys > 0:
-			self.main.open_doors(self.doors_to_open)
+			self.main.open_doors()
 
 		if (k[pygame.K_1]):
 			self.weapon = 1

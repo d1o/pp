@@ -9,6 +9,8 @@ class Block(pygame.sprite.Sprite):
 			self.path = 'img/tiles/ground/d2.png'
 		elif img == 'D3':
 			self.path = 'img/tiles/ground/d3.png'
+		elif img == 'B0':
+			self.path = 'img/tiles/bricks/b0.png'
 		elif img == 'B1':
 			self.path = 'img/tiles/bricks/b1.png'
 		elif img == 'B2':

@@ -1,13 +1,4 @@
-from sets import *
-from lvl import *
-from camera import *
-from playerclass import *
-from blockclass import *
-from bulletclass import *
-from enemyclass import *
-from pntclass import *
-from bonusclass import *
-from background import *
+from load import *
 
 class Game():
 	def __init__(self):
@@ -22,6 +13,10 @@ class Game():
 		self.lvl_won = False
 
 		self.score = 0
+
+		self.level = 1
+
+		self.key_img = pygame.image.load('img/oth/key.png')
 
 		pygame.font.init()
 		self.font1 = pygame.font.Font('fonts/Ubuntu-R.ttf', 64)	
@@ -125,7 +120,7 @@ class Game():
 			sys.exit()
 
 	def start(self):
-		self.bg = Background(0,0)
+		(self.LVL, self.LVL_H, self.LVL_W, self.bg) = level(self.level)
 
 		self.score = 0
 		self.sprites = pygame.sprite.Group()		#wszystkie sprity
@@ -147,72 +142,71 @@ class Game():
 
 		self.lvl_won = False
 
-		COLLS = ['D1', 'D2', 'D3', 'D4', 'B1', 'B2', 'WO', 'JU']
-		DOORS = ['DD']
+		COLLS = ['D1', 'D2', 'D3', 'D4', 'B0', 'B1', 'B2', 'WO', 'JU']
 		PLATFORMS = ['DP', 'BP', 'WP']
 		DESTRO = ['BO']
 		NO_COLLS = ['BG']
 		ENEMS = ['EE','S0','S1','S2','S3','TT', 'T0', 'T1']
 
-		for i in range(len(LVL)):
-			for j in range(len(LVL[i])):
-				if LVL[i][j] == 'P0':
+		for i in range(len(self.LVL)):
+			for j in range(len(self.LVL[i])):
+				if self.LVL[i][j] == 'P0':
 					self.player = Player(16+j*TILESIZE, 16+i*TILESIZE, self)
 					self.sprites.add(self.player)
 
-				if LVL[i][j] in COLLS:
-					b = Block(16+j*TILESIZE, 16+i*TILESIZE, LVL[i][j])
+				if self.LVL[i][j] in COLLS:
+					b = Block(16+j*TILESIZE, 16+i*TILESIZE, self.LVL[i][j])
 					self.sprites.add(b)
 					self.blocks.add(b)
 					self.cls.add(b)
-					if LVL[i][j] == 'JU':
+					if self.LVL[i][j] == 'JU':
 						self.jumps.add(b)
 
-				elif LVL[i][j][0] == 'C' and  LVL[i][j][1].isdigit():
-					c = Coin(16+j*TILESIZE, 16+i*TILESIZE, LVL[i][j])
+				elif self.LVL[i][j][0] == 'C' and  self.LVL[i][j][1].isdigit():
+					c = Coin(16+j*TILESIZE, 16+i*TILESIZE, self.LVL[i][j])
 					self.sprites.add(c)
 					self.bonuses.add(c)
 
-				elif LVL[i][j] == 'KY':
+				elif self.LVL[i][j] == 'KY':
 					k = Key(16+j*TILESIZE, 16+i*TILESIZE)
 					self.sprites.add(k)
 					self.keys.add(k)
 
-				elif LVL[i][j] in DESTRO:
+				elif self.LVL[i][j] in DESTRO:
 					b = Box(16+j*TILESIZE, 16+i*TILESIZE, self)
 					self.sprites.add(b)
 					self.boxes.add(b)
 					self.cls.add(b)
 
-				elif LVL[i][j] in DOORS:
+				elif self.LVL[i][j] == 'DD':
 					d = Doors(j*TILESIZE, i*TILESIZE, self)
 					self.sprites.add(d)
 					self.doors.add(d)
 					self.cls.add(d)
 
-				elif LVL[i][j] in ENEMS:
-					if LVL[i][j] == 'EE':
+				elif self.LVL[i][j] in ENEMS:
+					if self.LVL[i][j] == 'EE':
 						e = Enemy1(16+j*TILESIZE, 16+i*TILESIZE, self)
 						self.sprites.add(e)
 						self.enemies.add(e)
-					if LVL[i][j][0] == 'S':
-						s = Spikes(16+j*TILESIZE, 16+i*TILESIZE, int(LVL[i][j][1]), self)
+					if self.LVL[i][j][0] == 'S':
+						s = Spikes(16+j*TILESIZE, 16+i*TILESIZE, int(self.LVL[i][j][1]), self)
 						self.sprites.add(s)
 						self.spikes.add(s)
 						self.blocks.add(s)
-					if LVL[i][j] == 'TT':
+					if self.LVL[i][j] == 'TT':
 						t = Turret(16+j*TILESIZE, 16+i*TILESIZE, self)
 						self.sprites.add(t)
 						self.turrets.add(t)
 						self.cls.add(t)
-					if LVL[i][j][0] == 'T' and  LVL[i][j][1].isdigit():
-						t = Turret2(16+j*TILESIZE, 16+i*TILESIZE, LVL[i][j][1], self)
+					if self.LVL[i][j][0] == 'T' and  self.LVL[i][j][1].isdigit():
+						t = Turret2(16+j*TILESIZE, 16+i*TILESIZE, self.LVL[i][j][1], self)
 						self.sprites.add(t)
 						self.turrets.add(t)
 						self.cls.add(t)
 
-				elif LVL[i][j] in PLATFORMS:
-					p = Platform(16+j*TILESIZE, 16+i*TILESIZE, LVL[i][j], self)
+				elif self.LVL[i][j] in PLATFORMS:
+					p = Platform(16+j*TILESIZE, 16+i*TILESIZE, self.LVL[i][j], self)
 					self.sprites.add(p)
 					self.platforms.add(p)
 					self.cls.add(p)
@@ -244,13 +238,15 @@ class Game():
 
 		
 	def colls(self):
-		######## CZY POCISK TRAFIŁ W ŚCIANĘ/KOLCE ########
+		######## CZY POCISK TRAFIŁ W ŚCIANĘ/KOLCE/DRZWI ########
 		for b in self.blocks:
 			shots_bricks_coll = pygame.sprite.spritecollide(b, self.shots, True)
 		for p in self.platforms:
 			shots_bricks_coll = pygame.sprite.spritecollide(p, self.shots, True)
 		for s in self.spikes:
 			shots_bricks_coll = pygame.sprite.spritecollide(s, self.shots, True)
+		for d in self.doors:
+			shots_doors_coll = pygame.sprite.spritecollide(d, self.shots, True)
 
 		######## CZY POCISK TRAFIŁ W SKRZYNKĘ ########
 		for bo in self.boxes:
@@ -299,12 +295,16 @@ class Game():
 			self.game = False
 
 		######## CZY GRACZ WYPADŁ POZA MAPĘ ########
-		if self.player.pos.y >= LVL_H * TILESIZE + 5 * TILESIZE:
+		if self.player.pos.y >= self.LVL_H * TILESIZE + 5 * TILESIZE:
 			self.game = False
 
 		######## CZY GRACZ DOTARŁ DO KOŃCA MAPY ########
-		if self.player.rect.right >= LVL_W * TILESIZE - 3 * TILESIZE and self.player.on_ground:
+		if self.player.rect.right >= self.LVL_W * TILESIZE - 3 * TILESIZE and self.player.on_ground:
 			self.lvl_won = True
+			if self.level == 1:
+				self.level = 2
+			else:
+				self.level = 1
 			self.game = False
 
 		######## CZY GRACZ PODNIÓSŁ BONUS/MONETE/BRON/KLUCZ ########
@@ -333,9 +333,10 @@ class Game():
 				self.sprites.add(bns)
 				self.bonuses.add(bns)
 
-	def open_doors(self, doors):
+	def open_doors(self):
 		doorsnum = len(self.doors)
-		doors.kill()
+		for d in self.doors:
+			d.kill()
 		if len(self.doors) < doorsnum:
 			self.player.keys -= 1
 
@@ -350,10 +351,12 @@ class Game():
 		while len(scr_str) != 5:
 			scr_str = '0' + scr_str
 		self.text_score = self.font3.render('score: '+scr_str, 0, BLACK)
-		self.text_keys = self.font3.render(str(self.player.keys) + ' x keys', 0, BLACK)
+		#self.text_keys = self.font3.render(str(self.player.keys) + ' x keys', 0, BLACK)
 
 		self.WINDOW.blit(self.text_score,(8.5*WIDTH/10, HEIGHT/50))
-		self.WINDOW.blit(self.text_keys,(8.5*WIDTH/10, 3*HEIGHT/50))
+		#self.WINDOW.blit(self.text_keys,(8.5*WIDTH/10, 3*HEIGHT/50))
+		if self.player.keys > 0:
+			self.WINDOW.blit(self.key_img,(9.5*WIDTH/10, 4*HEIGHT/50))
 
 		for d in self.doors:
 			if math.fabs(self.player.pos.x - d.pos.x) <= 3 * TILESIZE and math.fabs(self.player.pos.y - d.pos.y) <= 3 * TILESIZE:
