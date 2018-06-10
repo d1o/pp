@@ -1,18 +1,16 @@
 from sets import *
 
 class Bonus(pygame.sprite.Sprite):
-	#dodatkowe punkty
-	def __init__(self, pos, who):
+	def __init__(self, pos):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.image.load('img/oth/bns.png')
 		self.rect = self.image.get_rect()
 		self.rect.center = pos
 
 		#liczba punktow za pdoniesienie
-		self.pts = 100
+		self.pts = 50
 
 class Key(pygame.sprite.Sprite):
-	#dodatkowe punkty
 	def __init__(self, x, y):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.image.load('img/oth/key.png')

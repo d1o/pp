@@ -55,9 +55,6 @@ class Enemy1(pygame.sprite.Sprite):
 					self.rect.right = s.rect.left
 				self.vel.x *= -1
 				self.enemy_acc *= -1
-				
-				if self.rect.bottom >= s.rect.top and self.rect.top < s.rect.top:
-					self.rect.bottom = s.rect.top
 
 ##################################################
 

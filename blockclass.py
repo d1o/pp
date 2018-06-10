@@ -28,7 +28,7 @@ class Block(pygame.sprite.Sprite):
 ##################################################
 
 class Box(pygame.sprite.Sprite):
-	def __init__(self, x, y, main):
+	def __init__(self, x, y, mode, main):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.image.load('img/tiles/box/bo1.png')
 		self.rect = self.image.get_rect()
@@ -36,6 +36,7 @@ class Box(pygame.sprite.Sprite):
 		self.rect.center = self.pos
 		self.shots = 0
 		self.main = main
+		self.mode = int(mode)
 
 		self.vel = pygame.math.Vector2((0, 0))
 		self.acc = pygame.math.Vector2((0, 0))

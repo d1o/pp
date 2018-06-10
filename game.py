@@ -11,9 +11,7 @@ class Game():
 		self.game = True
 
 		self.lvl_won = False
-
 		self.score = 0
-
 		self.level = 1
 
 		self.key_img = pygame.image.load('img/oth/key.png')
@@ -27,6 +25,7 @@ class Game():
 	def screen(self):
 		self.screen_loop = True
 		self.decision = 0
+		self.screen_n = 0
 
 		pos1 = (WIDTH/20, 10*HEIGHT/20)
 		self.txt_positions = [pos1, (pos1[0], pos1[1]+64), (pos1[0], pos1[1]+128), (pos1[0], pos1[1]+192)]
@@ -34,43 +33,121 @@ class Game():
 
 		while self.screen_loop:
 			if self.game == True:
-				self.text_start = self.font1.render('START', 0, WHITE)
-				self.r_text_start = self.text_start.get_rect()
-				self.r_text_start.topleft = pygame.math.Vector2(self.txt_positions[0])
+				if self.screen_n == 0:
+					for e in pygame.event.get():
+						if e.type == QUIT:
+							self.runnig = False
+							sys.exit()
+						if e.type == pygame.KEYDOWN:
+							if e.key == pygame.K_DOWN:
+								if self.decision < 3: self.decision += 1
+							if e.key == pygame.K_UP:
+								if self.decision > 0: self.decision -= 1
+							if e.key == pygame.K_RETURN:
+								if self.decision == 0:
+									self.start()
+								elif self.decision > 0 and self.decision < 3:
+									self.screen_n = self.decision
+									self.decision = 0
+								else:
+									self.screen_loop = False
+									self.runnig = False
+									sys.exit()
 
-				self.text_level = self.font1.render('LEVEL SELECT', 0, WHITE)
-				self.r_text_level = self.text_level.get_rect()
-				self.r_text_level.topleft = pygame.math.Vector2(self.txt_positions[1])
+					self.text_start = self.font1.render('START', 0, WHITE)
+					self.r_text_start = self.text_start.get_rect()
+					self.r_text_start.topleft = pygame.math.Vector2(self.txt_positions[0])
 
-				self.text_instructions = self.font1.render('INSCTRUCTIONS', 0, WHITE)
-				self.r_text_instructions = self.text_instructions.get_rect()
-				self.r_text_instructions.topleft = pygame.math.Vector2(self.txt_positions[2])
+					self.text_level = self.font1.render('LEVEL SELECT', 0, WHITE)
+					self.r_text_level = self.text_level.get_rect()
+					self.r_text_level.topleft = pygame.math.Vector2(self.txt_positions[1])
 
-				self.text_exit = self.font1.render('EXIT', 0, WHITE)
-				self.r_text_exit = self.text_exit.get_rect()
-				self.r_text_exit.topleft = pygame.math.Vector2(self.txt_positions[3])
+					self.text_instructions = self.font1.render('INSCTRUCTIONS', 0, WHITE)
+					self.r_text_instructions = self.text_instructions.get_rect()
+					self.r_text_instructions.topleft = pygame.math.Vector2(self.txt_positions[2])
 
-				for e in pygame.event.get():
-					if e.type == QUIT:
-						self.runnig = False
-						sys.exit()
-					if e.type == pygame.KEYDOWN:
-						if e.key == pygame.K_DOWN:
-							if self.decision < 3: self.decision += 1
-						if e.key == pygame.K_UP:
-							if self.decision > 0: self.decision -= 1
-						if e.key == pygame.K_RETURN:
-							self.screen_loop = False
+					self.text_exit = self.font1.render('EXIT', 0, WHITE)
+					self.r_text_exit = self.text_exit.get_rect()
+					self.r_text_exit.topleft = pygame.math.Vector2(self.txt_positions[3])
 
-				self.pnt.rect.midright = pygame.math.Vector2(self.txt_positions[self.decision][0], self.txt_positions[self.decision][1]+36)
+					self.pnt.rect.midright = pygame.math.Vector2(self.txt_positions[self.decision][0], self.txt_positions[self.decision][1]+36)
 
-				self.WINDOW.fill(RED)
-				self.WINDOW.blit(self.text_start,self.r_text_start)
-				self.WINDOW.blit(self.text_instructions,self.r_text_instructions)
-				self.WINDOW.blit(self.text_level,self.r_text_level)
-				self.WINDOW.blit(self.text_exit,self.r_text_exit)
-				self.WINDOW.blit(self.pnt.image,self.pnt.rect)
-				pygame.display.flip()
+					self.WINDOW.fill((0,4,30))
+					self.WINDOW.blit(self.text_start,self.r_text_start)
+					self.WINDOW.blit(self.text_instructions,self.r_text_instructions)
+					self.WINDOW.blit(self.text_level,self.r_text_level)
+					self.WINDOW.blit(self.text_exit,self.r_text_exit)
+					self.WINDOW.blit(self.pnt.image,self.pnt.rect)
+					pygame.display.flip()
+
+					
+				elif self.screen_n == 1:
+					for e in pygame.event.get():
+						if e.type == QUIT:
+							self.runnig = False
+							sys.exit()
+						if e.type == pygame.KEYDOWN:
+							if e.key == pygame.K_DOWN:
+								if self.decision < 1: self.decision += 1
+							if e.key == pygame.K_UP:
+								if self.decision > 0: self.decision -= 1
+							if e.key == pygame.K_RETURN:
+								if self.decision == 0:
+									self.level = 1
+								if self.decision == 1:
+									self.level = 2
+								self.decision = 0
+								self.screen_n = 0
+
+					self.text_lvl01 = self.font1.render('LEVEL 01', 0, WHITE)
+					self.r_text_lvl01 = self.text_start.get_rect()
+					self.r_text_lvl01.topleft = pygame.math.Vector2(self.txt_positions[0])
+
+					self.text_lvl02 = self.font1.render('LEVEL 02', 0, WHITE)
+					self.r_text_lvl02 = self.text_level.get_rect()
+					self.r_text_lvl02.topleft = pygame.math.Vector2(self.txt_positions[1])
+
+					self.pnt.rect.midright = pygame.math.Vector2(self.txt_positions[self.decision][0], self.txt_positions[self.decision][1]+36)
+
+					self.WINDOW.fill((0,4,30))
+					self.WINDOW.blit(self.text_lvl01,self.r_text_lvl01)
+					self.WINDOW.blit(self.text_lvl02,self.r_text_lvl02)
+					self.WINDOW.blit(self.pnt.image,self.pnt.rect)
+					pygame.display.flip()
+
+
+				elif self.screen_n == 2:
+					for e in pygame.event.get():
+						if e.type == QUIT:
+							self.runnig = False
+							sys.exit()
+						if e.type == pygame.KEYDOWN:
+							if e.key == pygame.K_RETURN or e.key == pygame.K_ESCAPE:
+								self.screen_n = 0
+
+					self.text_1 = self.font2.render('Use AD or left and right arrow to move.', 0, WHITE)
+					self.r_text_1 = self.text_start.get_rect()
+					self.r_text_1.topleft = pygame.math.Vector2((10,10))
+
+					self.text_2 = self.font2.render('Press W or up arrow to jump.', 0, WHITE)
+					self.r_text_2 = self.text_start.get_rect()
+					self.r_text_2.topleft = pygame.math.Vector2((10,70))
+
+					self.text_3 = self.font2.render('Find key to open the door.', 0, WHITE)
+					self.r_text_3 = self.text_start.get_rect()
+					self.r_text_3.topleft = pygame.math.Vector2((10,130))
+
+					self.text_4 = self.font2.render('Press F to use the key.', 0, WHITE)
+					self.r_text_4 = self.text_start.get_rect()
+					self.r_text_4.topleft = pygame.math.Vector2((10,190))
+
+					self.WINDOW.fill((0,4,30))
+					self.WINDOW.blit(self.text_1,self.r_text_1)
+					self.WINDOW.blit(self.text_2,self.r_text_2)
+					self.WINDOW.blit(self.text_3,self.r_text_3)
+					self.WINDOW.blit(self.text_4,self.r_text_4)
+					pygame.display.flip()
+
 
 			else:
 				if self.lvl_won == True:
@@ -80,17 +157,19 @@ class Game():
 							sys.exit()
 
 					k = pygame.key.get_pressed()
-					if k[pygame.K_RETURN]: 
-						
-						self.decision = 0
-						self.screen_loop = False
+					if k[pygame.K_RETURN]:
+						self.start()
+					if k[pygame.K_ESCAPE]:
+						self.game = True
 
 					self.text_game_over = self.font1.render('You beat the level!', 0, WHITE)
 					self.text_press_ret = self.font2.render('Press return to start...', 0, WHITE)
+					self.text_coins = self.font2.render('Coins:  '+str(self.collected_c)+' / '+str(self.c_num), 0, WHITE)
 
-					self.WINDOW.fill(GREEN)
+					self.WINDOW.fill((51,127,57))
 					self.WINDOW.blit(self.text_game_over,(13*WIDTH/40, HEIGHT/5))
 					self.WINDOW.blit(self.text_press_ret,(WIDTH/22, 7*HEIGHT/8))
+					self.WINDOW.blit(self.text_coins,(WIDTH/22, 6*HEIGHT/8))
 					pygame.display.flip()
 
 				else:
@@ -101,23 +180,17 @@ class Game():
 
 					k = pygame.key.get_pressed()
 					if k[pygame.K_RETURN]: 
-						
-						self.decision = 0
-						self.screen_loop = False
+						self.start()
+					if k[pygame.K_ESCAPE]:
+						self.game = True
 
 					self.text_game_over = self.font1.render('GAME OVER', 0, WHITE)
 					self.text_press_ret = self.font2.render('Press return to start...', 0, WHITE)
 
-					self.WINDOW.fill(BLACK)
+					self.WINDOW.fill((158, 28, 28))
 					self.WINDOW.blit(self.text_game_over,(13*WIDTH/40, HEIGHT/5))
 					self.WINDOW.blit(self.text_press_ret,(WIDTH/22, 7*HEIGHT/8))
 					pygame.display.flip()
-
-		if self.decision == 0:
-			self.start()
-		else:
-			self.runnig = False
-			sys.exit()
 
 	def start(self):
 		(self.LVL, self.LVL_H, self.LVL_W, self.bg) = level(self.level)
@@ -141,6 +214,8 @@ class Game():
 		self.cls = pygame.sprite.Group()			#sprite, z ktorymi gracz i przeciwnicy moga kolidowac
 
 		self.lvl_won = False
+
+		self.c_num = 0
 
 		COLLS = ['D1', 'D2', 'D3', 'D4', 'B0', 'B1', 'B2', 'WO', 'JU']
 		PLATFORMS = ['DP', 'BP', 'WP']
@@ -166,17 +241,20 @@ class Game():
 					c = Coin(16+j*TILESIZE, 16+i*TILESIZE, self.LVL[i][j])
 					self.sprites.add(c)
 					self.bonuses.add(c)
+					self.c_num += 1
+
+				elif self.LVL[i][j][0] == 'Q' and  self.LVL[i][j][1].isdigit():
+					b = Box(16+j*TILESIZE, 16+i*TILESIZE, self.LVL[i][j][1], self)
+					if b.mode == 1:
+						self.c_num += 1
+					self.sprites.add(b)
+					self.boxes.add(b)
+					self.cls.add(b)
 
 				elif self.LVL[i][j] == 'KY':
 					k = Key(16+j*TILESIZE, 16+i*TILESIZE)
 					self.sprites.add(k)
 					self.keys.add(k)
-
-				elif self.LVL[i][j] in DESTRO:
-					b = Box(16+j*TILESIZE, 16+i*TILESIZE, self)
-					self.sprites.add(b)
-					self.boxes.add(b)
-					self.cls.add(b)
 
 				elif self.LVL[i][j] == 'DD':
 					d = Doors(j*TILESIZE, i*TILESIZE, self)
@@ -210,6 +288,8 @@ class Game():
 					self.sprites.add(p)
 					self.platforms.add(p)
 					self.cls.add(p)
+		
+		self.collected_c = 0
 
 		self.camera = Camera()
 		self.loop()
@@ -225,7 +305,6 @@ class Game():
 	def events(self):
 		for e in pygame.event.get():
 			if e.type == QUIT:
-				if self.game: self.game = False
 				self.running = False
 				sys.exit()
 
@@ -233,20 +312,14 @@ class Game():
 		self.sprites.update()
 		self.player.update()
 		self.camera.update(self.player)
-
 		self.colls()
-
 		
 	def colls(self):
 		######## CZY POCISK TRAFIŁ W ŚCIANĘ/KOLCE/DRZWI ########
-		for b in self.blocks:
-			shots_bricks_coll = pygame.sprite.spritecollide(b, self.shots, True)
-		for p in self.platforms:
-			shots_bricks_coll = pygame.sprite.spritecollide(p, self.shots, True)
-		for s in self.spikes:
-			shots_bricks_coll = pygame.sprite.spritecollide(s, self.shots, True)
-		for d in self.doors:
-			shots_doors_coll = pygame.sprite.spritecollide(d, self.shots, True)
+		pygame.sprite.groupcollide(self.blocks, self.shots, False, True)
+		pygame.sprite.groupcollide(self.platforms, self.shots, False, True)
+		pygame.sprite.groupcollide(self.spikes, self.shots, False, True)
+		pygame.sprite.groupcollide(self.doors, self.shots, False, True)
 
 		######## CZY POCISK TRAFIŁ W SKRZYNKĘ ########
 		for bo in self.boxes:
@@ -256,18 +329,31 @@ class Game():
 				if s.who == 'p':
 					if bo.shots < 2: bo.shots += random.randint(1,2)
 					else: 
-						self.bonus(bo.rect.center, 'box')
+						if bo.mode == 1:
+							c = Coin(bo.pos.x, bo.pos.y, 'C1')
+							self.sprites.add(c)
+							self.bonuses.add(c)
+						elif bo.mode == 2:
+							wpn = Weapon(bo.pos, 1)
+							self.sprites.add(wpn)
+							self.weapons.add(wpn)
+						elif bo.mode == 3:
+							wpn = Weapon(bo.pos, 2)
+							self.sprites.add(wpn)
+							self.weapons.add(wpn)
+						elif bo.mode == 4:
+							bns = Bonus(bo.pos)
+							self.sprites.add(bns)
+							self.bonuses.add(bns)
 						bo.kill()
 
 		######## CZY POCISK TRAFIŁ W PRZECIWNIKA ########
 		for e in self.enemies:
 			shots_enemies_colls = pygame.sprite.spritecollide(e, self.shots, False)
-			#if shots_enemies_colls:
 			for s in shots_enemies_colls:
 				if s.who == 'p':
 					s.kill()
 					self.score += 50
-					self.bonus(e.rect.center, 'enemy')
 					e.kill()
 
 		######## CZY POCISK TRAFIŁ W WIEŻYCZKĘ ########
@@ -280,7 +366,6 @@ class Game():
 					if t.lives > 0: t.lives -= 1
 					else:
 						self.score += 75
-						self.bonus(t.rect.center, 'enemy')
 						t.kill()
 
 		######## CZY GRACZ ZOSTAŁ TRAFIONY PRZEZ PRZECIWNIKA ########
@@ -311,6 +396,8 @@ class Game():
 		bns_pla_coll = pygame.sprite.spritecollide(self.player, self.bonuses, True)
 		for b in bns_pla_coll:
 			self.score += b.pts
+			if b.pts > 50:
+				self.collected_c += 1
 
 		key_pla_coll = pygame.sprite.spritecollide(self.player, self.keys, True)
 		for b in key_pla_coll:
@@ -319,19 +406,6 @@ class Game():
 		wpn_pla_coll = pygame.sprite.spritecollide(self.player, self.weapons, True)
 		for b in wpn_pla_coll:
 			self.player.weapon = b.v
-
-	def bonus(self, pos, who):
-		bns = Bonus(pos, who)
-		wpn = Weapon(pos, random.randint(1,2))
-		if who == 'box':
-			if random.randint(1,3) == 1:
-				self.sprites.add(wpn)
-				self.weapons.add(wpn)
-
-		elif who == 'enemy':
-			if random.randint(1,5) == 1:
-				self.sprites.add(bns)
-				self.bonuses.add(bns)
 
 	def open_doors(self):
 		doorsnum = len(self.doors)
@@ -351,10 +425,8 @@ class Game():
 		while len(scr_str) != 5:
 			scr_str = '0' + scr_str
 		self.text_score = self.font3.render('score: '+scr_str, 0, BLACK)
-		#self.text_keys = self.font3.render(str(self.player.keys) + ' x keys', 0, BLACK)
 
 		self.WINDOW.blit(self.text_score,(8.5*WIDTH/10, HEIGHT/50))
-		#self.WINDOW.blit(self.text_keys,(8.5*WIDTH/10, 3*HEIGHT/50))
 		if self.player.keys > 0:
 			self.WINDOW.blit(self.key_img,(9.5*WIDTH/10, 4*HEIGHT/50))
 
