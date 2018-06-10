@@ -164,12 +164,10 @@ class Game():
 
 					self.text_game_over = self.font1.render('You beat the level!', 0, WHITE)
 					self.text_press_ret = self.font2.render('Press return to start...', 0, WHITE)
-					self.text_coins = self.font2.render('Coins:  '+str(self.collected_c)+' / '+str(self.c_num), 0, WHITE)
 
 					self.WINDOW.fill((51,127,57))
 					self.WINDOW.blit(self.text_game_over,(13*WIDTH/40, HEIGHT/5))
 					self.WINDOW.blit(self.text_press_ret,(WIDTH/22, 7*HEIGHT/8))
-					self.WINDOW.blit(self.text_coins,(WIDTH/22, 6*HEIGHT/8))
 					pygame.display.flip()
 
 				else:
@@ -215,8 +213,6 @@ class Game():
 
 		self.lvl_won = False
 
-		self.c_num = 0
-
 		COLLS = ['D1', 'D2', 'D3', 'D4', 'B0', 'B1', 'B2', 'WO', 'JU']
 		PLATFORMS = ['DP', 'BP', 'WP']
 		DESTRO = ['BO']
@@ -241,12 +237,9 @@ class Game():
 					c = Coin(16+j*TILESIZE, 16+i*TILESIZE, self.LVL[i][j])
 					self.sprites.add(c)
 					self.bonuses.add(c)
-					self.c_num += 1
 
 				elif self.LVL[i][j][0] == 'Q' and  self.LVL[i][j][1].isdigit():
 					b = Box(16+j*TILESIZE, 16+i*TILESIZE, self.LVL[i][j][1], self)
-					if b.mode == 1:
-						self.c_num += 1
 					self.sprites.add(b)
 					self.boxes.add(b)
 					self.cls.add(b)
@@ -289,8 +282,6 @@ class Game():
 					self.platforms.add(p)
 					self.cls.add(p)
 		
-		self.collected_c = 0
-
 		self.camera = Camera()
 		self.loop()
 
@@ -396,8 +387,6 @@ class Game():
 		bns_pla_coll = pygame.sprite.spritecollide(self.player, self.bonuses, True)
 		for b in bns_pla_coll:
 			self.score += b.pts
-			if b.pts > 50:
-				self.collected_c += 1
 
 		key_pla_coll = pygame.sprite.spritecollide(self.player, self.keys, True)
 		for b in key_pla_coll:
